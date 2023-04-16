@@ -70,8 +70,10 @@ class Wt931ImuHandler
         void set9AxisMode();
         void set6AxisMode();
         void setBaudRate(uint32_t baudrate);
-
+        void setRefreshRate(uint32_t setRefreshRate);
+        void setDefaultSettings();
     private:
+        void saveConfiguration();
         std::string deviceName;
         int fd;
         termios tty;
