@@ -23,6 +23,7 @@
             std::vector<uint32_t> listofDelimiters;
             std::array<char,1<<16> recieveBuffer;
             std::unique_ptr<char> currentBufferLocation;
+            D * child;
     };
 
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
