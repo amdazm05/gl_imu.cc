@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(gl_imu)
+set(CXX_STANDARD_REQUIRED 2a)
 include_directories(
     ${PROJECT_SOURCE_DIR}/include/
 )

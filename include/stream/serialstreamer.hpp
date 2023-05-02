@@ -5,6 +5,36 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <concept>
+
+    template<class T>
+    concept _IsBufferType = requires(class T)
+    {
+        std::dynamic_cast<decltype(T)>(T)->std::pointer_type;
+    }
+
+    template <class T>
+    requries _IsBufferType<T>
+    class BufferCoroutine
+    {
+        public:
+            class PromiseType
+            {
+                public:
+                T m_value;
+                BufferCoroutine get_return_object();
+                std::suspend_never initial_suspend() noexcept;
+                std::suspend_never final_suspend() noexcept;
+                std::suspend_always yield_value(T value){}
+                void return_value(T values);
+                void unhandled_exception();
+            };
+        public:
+            BufferCoroutine(PromiseType);
+            ~BufferCoroutine();
+        public:
+            std::couroutine_handle<PromiseType> m_handle;
+    }
 
     template<class D>
     class SerialStreamer
@@ -41,8 +71,6 @@
             std::size_t ReadAvailableData( T * dataBufferToReadTo);
             void writeData(std::shared_ptr<char> dataToWrite, std::size_t bytesToWrite);
     };
-
-
     #endif
 
 #endif
