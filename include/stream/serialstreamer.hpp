@@ -8,13 +8,11 @@
 #include <concept>
 
     template<class T>
-    concept _IsBufferType = requires(class T)
-    {
-        std::dynamic_cast<decltype(T)>(T)->std::pointer_type;
-    }
+    template <typename T> 
+    concept _IsBufferType = std::is_pointer<T>::value;
 
     template <class T>
-    requries _IsBufferType<T>
+    requires _IsBufferType<T>
     class BufferCoroutine
     {
         public:
