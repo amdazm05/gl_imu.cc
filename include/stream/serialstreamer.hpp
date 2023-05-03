@@ -7,6 +7,7 @@
 #include <vector>
 #include <concepts>
 #include <coroutine>
+#include <iostream>
 #include <optional>
 
     template<class T>
@@ -17,7 +18,7 @@
     class BufferCoroutine
     {
         public:
-            class PromiseType
+            class promise_type
             {
                 public:
                 std::optional<T> m_value;
@@ -25,11 +26,11 @@
                 {
                     return BufferCoroutine<T>(this); 
                 }
-                std::suspend_never initial_suspend() noexcept
+                std::suspend_always initial_suspend() noexcept
                 {
                     return {};
                 }
-                std::suspend_never final_suspend() noexcept
+                std::suspend_always final_suspend() noexcept
                 {
                     return {};
                 }
@@ -42,16 +43,19 @@
                 void unhandled_exception(){};
             };
         public:
-            BufferCoroutine(PromiseType* promise)
+            //Underlying issue here
+            BufferCoroutine(promise_type* promise)
+                : m_handle(std::coroutine_handle<promise_type>::from_promise(*promise))
             {
-                std::coroutine_handle<PromiseType>::from_promise(promise);
+                
             }
+            
             ~BufferCoroutine()
             {
                 m_handle.destroy();
             }
-        private:
-            std::coroutine_handle<PromiseType> m_handle;
+        public:
+            std::coroutine_handle<promise_type> m_handle;
     };
 
 
