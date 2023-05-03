@@ -5,10 +5,12 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <concept>
+#include <concepts>
+#include <coroutine>
+#include <iostream>
+#include <optional>
 
     template<class T>
-    template <typename T> 
     concept _IsBufferType = std::is_pointer<T>::value;
 
     template <class T>
@@ -16,23 +18,46 @@
     class BufferCoroutine
     {
         public:
-            class PromiseType
+            class promise_type
             {
                 public:
-                T m_value;
-                BufferCoroutine get_return_object();
-                std::suspend_never initial_suspend() noexcept;
-                std::suspend_never final_suspend() noexcept;
-                std::suspend_always yield_value(T value){}
-                void return_value(T values);
-                void unhandled_exception();
+                std::optional<T> m_value;
+                BufferCoroutine<T> get_return_object()
+                {
+                    return BufferCoroutine<T>(this); 
+                }
+                std::suspend_always initial_suspend() noexcept
+                {
+                    return {};
+                }
+                std::suspend_always final_suspend() noexcept
+                {
+                    return {};
+                }
+                std::suspend_always yield_value(T value)
+                {
+                    m_value = value;
+                    return {};
+                }
+                void return_value(T value){ m_value = value;}
+                void unhandled_exception(){};
             };
         public:
-            BufferCoroutine(PromiseType);
-            ~BufferCoroutine();
+            //Underlying issue here
+            BufferCoroutine(promise_type* promise)
+                : m_handle(std::coroutine_handle<promise_type>::from_promise(*promise))
+            {
+                
+            }
+            
+            ~BufferCoroutine()
+            {
+                m_handle.destroy();
+            }
         public:
-            std::couroutine_handle<PromiseType> m_handle;
-    }
+            std::coroutine_handle<promise_type> m_handle;
+    };
+
 
     template<class D>
     class SerialStreamer
@@ -55,7 +80,7 @@
     };
 
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-    
+
     class WindowsSerialStreamer : SerialStreamer<WindowsSerialStreamer>
     {
         public:
