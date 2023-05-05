@@ -6,6 +6,19 @@ set(CMAKE_CXX_FLAGS "-std=c++20 -fcoroutines")
 
 option(EnableTests "Tests are Disabled" OFF)
 
+include_directories(
+    ${CMAKE_SOURCE_DIR}/libs/freeglut/include
+    ${CMAKE_SOURCE_DIR}/libs/glfw/include
+    ${CMAKE_SOURCE_DIR}/libs/glfw/deps
+    ${CMAKE_SOURCE_DIR}/libs/glew-cmake/include
+    ${CMAKE_SOURCE_DIR}/glad/cmake
+)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/libs/freeglut)
+add_subdirectory(${PROJECT_SOURCE_DIR}/libs/glfw)
+add_subdirectory(${PROJECT_SOURCE_DIR}/libs/glew-cmake)
+add_subdirectory(${PROJECT_SOURCE_DIR}/libs/GLAD)
+
 if(EnableTests)
     add_subdirectory(${PROJECT_SOURCE_DIR}/libs/googletest)
     add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
@@ -26,10 +39,13 @@ target_include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
+target_link_libraries(${PROJECT_NAME} PUBLIC freeglut_static libglew_static libglew_static GLAD)
+
 add_executable(main
     ${PROJECT_SOURCE_DIR}/app/app_main.cc
 )
 
 target_link_libraries(
-    main PUBLIC ${PROJECT_NAME}
+    main PUBLIC 
+    ${PROJECT_NAME} 
 )
