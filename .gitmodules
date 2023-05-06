@@ -13,3 +13,6 @@
 [submodule "libs/glew-cmake"]
 	path = libs/glew-cmake
 	url = https://github.com/Perlmint/glew-cmake.git
+[submodule "libs/glad"]
+	path = libs/glad
+	url = https://github.com/Dav1dde/glad.git
