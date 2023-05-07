@@ -8,6 +8,10 @@ set(CMAKE_CXX_FLAGS "-std=c++20 -fcoroutines")
 
 option(EnableTests "Tests are Disabled" OFF)
 
+option(GLFW_BUILD_EXAMPLES "Disabled examples from GLFW" OFF)
+option(GLFW_BUILD_TESTS "Disabled GLFW Testss" OFF)
+option(GLFW_BUILD_DOCS "Not building GLFW build docs" OFF)
+
 include_directories(
     ${CMAKE_SOURCE_DIR}/libs/freeglut/include
     ${CMAKE_SOURCE_DIR}/libs/glfw/include
