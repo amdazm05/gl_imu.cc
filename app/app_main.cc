@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../thirdparty/glad_core/include/glad/gl.h"
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 
