@@ -34,7 +34,7 @@ namespace
         return result;
     }
 
-    TEST(FactorialTest, CoroutineBufferTest) 
+    TEST(BufferTests, CoroutineBufferTest) 
     {
         EXPECT_EQ("BufferTest", RunCoroutineBufferTest());
     }

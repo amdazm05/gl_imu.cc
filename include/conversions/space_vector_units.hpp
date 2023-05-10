@@ -7,6 +7,7 @@
 #include <compare>
 #include <new>
 #include <algorithm>
+#include <cmath>
 
 namespace SpaceUnits
 {
@@ -29,7 +30,7 @@ namespace SpaceUnits
         public: 
             T _degree;
             RadialDegree():RadialDegree(0.0f){}
-            RadialDegree(T deg) _degree(deg){}
+            RadialDegree(T deg) :_degree(deg){}
             RadialDegree operator+(const RadialDegree &operand )
             {              
                 return this->_degree +operand._degree;
@@ -62,7 +63,7 @@ namespace SpaceUnits
         public:
             T _radian;
             RadialRadian():RadialRadian(0.0f){}
-            RadialRadian(T deg) RadialRadian(deg){}
+            RadialRadian(T deg){_radian = deg;}
             RadialRadian operator+(const RadialRadian &operand )
             {              
                 return this->_radian +operand._radian;
@@ -168,16 +169,6 @@ namespace SpaceUnits
     requires _isFloatingType4Byte<T>
     class SpaceUnits : std::enable_shared_from_this<SpaceUnits<T>>
     {
-        public:
-        std::shared_ptr<SpaceUnits<T>> getInstance()
-        {
-            return shared_from_this();
-        }
-        
-
-        private:
-        SpaceUnits(){ _inst = shared_from_this();}
-        static std::shared_ptr<SpaceUnits<T>> _inst;
     };
 }
 
