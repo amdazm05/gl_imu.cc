@@ -5,6 +5,8 @@
 #include <concepts>
 #include <memory>
 #include <compare>
+#include <new>
+#include <algorithm>
 
 namespace SpaceUnits
 {
@@ -50,7 +52,7 @@ namespace SpaceUnits
             {
                 return std::partial_ordering((this->_degree)<=>operand._degree);
             }
-            
+
     };
 
     template<typename T>
@@ -83,6 +85,83 @@ namespace SpaceUnits
             {
                 return std::partial_ordering((this->_radian)<=>operand._radian);
             }
+    };
+    template<class T>
+    requires _isFloatingType4Byte<T> || _isFloatingType8Byte<T> 
+    class Coordinates
+    {
+        private:
+        enum AxisEnum
+        {
+            x = 0,
+            y = 1,
+            z = 2
+        };
+        public:
+        alignas (std::hardware_constructive_interference_size) std::array<T,3> _data;
+        public:
+        Coordinates():Coordinates(0.0f,0.0f,0.0f){}
+        Coordinates(T x,T y, T z)
+        {
+            _data[AxisEnum::x] = x;
+            _data[AxisEnum::y] = y;
+            _data[AxisEnum::z] = z;
+        }
+
+        Coordinates operator+(Coordinates &operand)
+        {         
+            int idx = 0;
+            Coordinates result;
+            std::for_each
+            (
+                _data.begin(),
+                _data.end(),
+                [&idx,&operand,&result](T & currentElement)
+                { 
+                    result._data[idx]= operand._data[idx] + currentElement; 
+                    ++idx; 
+                }
+            );    
+            return result;
+        }
+
+        Coordinates operator-(Coordinates &operand)
+        {         
+            int idx = 0;
+            Coordinates result;
+            std::for_each
+            (
+                _data.begin(),
+                _data.end(),
+                [&idx,&operand,&result](T & currentElement)
+                { 
+                    result._data[idx]= currentElement - operand._data[idx]; 
+                    ++idx; 
+                }
+            );    
+            return result;
+        }
+
+        std::partial_ordering operator<=>(Coordinates &operand) 
+        {
+            T resultToCompareRHS = 0.0f;
+            T resultToCompareLHS = 0.0f;
+            int idx = 0;
+            std::for_each
+            (
+                _data.begin(),
+                _data.end(),
+                [&resultToCompareLHS,&resultToCompareRHS,&operand,&idx]
+                    (T &currentElement)
+                    { 
+                        resultToCompareLHS = resultToCompareLHS + std::pow(operand._data[idx],2);
+                        ++idx;
+                        resultToCompareRHS = resultToCompareRHS + std::pow(currentElement,2);
+                    }
+            );
+
+            return resultToCompareRHS <=> resultToCompareLHS;
+        }
     };
 
     template <class T>
