@@ -1,7 +1,5 @@
 #include <iostream>
-
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
+#include "graphics/window_component.hpp"
 
 
 // Function prototypes
