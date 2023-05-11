@@ -18,6 +18,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/thirdparty/glad_core/include
     ${CMAKE_SOURCE_DIR}/libs/glfw/deps
     ${CMAKE_SOURCE_DIR}/libs/glew-cmake/include
+    ${CMAKE_SOURCE_DIR}/thirdparty/glad_core/include
     )
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/libs/freeglut)
