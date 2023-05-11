@@ -20,7 +20,17 @@ WindowRenderComponent::WindowRenderComponent()
 
 WindowRenderComponent::~WindowRenderComponent()
 {
+    glfwTerminate();
+}
 
+void WindowRenderComponent::renderWindow()
+{
+    glfwMakeContextCurrent(_Window.get());
+
+    _WindowContext->ClearColor(0.5, 0.5, 0.5, 1.0f);
+    _WindowContext->Clear(GL_COLOR_BUFFER_BIT);
+
+    glfwSwapBuffers(_Window.get());
 }
 
 inline std::shared_ptr<WindowRenderComponent> WindowRenderComponent::getInstance()
