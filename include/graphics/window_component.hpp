@@ -11,9 +11,9 @@ class WindowRenderComponent : std::enable_shared_from_this<WindowRenderComponent
     public:
         WindowRenderComponent();
         ~WindowRenderComponent();
-        std::shared_ptr<WindowRenderComponent> getInstance();
-        std::shared_ptr<GLFWwindow> getWindowInstance();
-        std::shared_ptr<GladGLContext> getWindowContextInstance();
+        inline std::shared_ptr<WindowRenderComponent> getInstance();
+        inline std::shared_ptr<GLFWwindow> getWindowInstance();
+        inline std::shared_ptr<GladGLContext> getWindowContextInstance();
         bool isWindowContextAllocated();
         void renderWindow();
         void add_callbacks(std::function<void(

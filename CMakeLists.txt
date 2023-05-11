@@ -37,7 +37,8 @@ include_directories(
 add_library( ${PROJECT_NAME}
     STATIC
     # ${PROJECT_SOURCE_DIR}/src/sensors/wt931.cc
-    ${PROJECT_SOURCE_DIR}/src/stream/serialstreamer
+    ${PROJECT_SOURCE_DIR}/src/stream/serialstreamer.cc
+    ${PROJECT_SOURCE_DIR}/src/graphics/window_component.cc
 )
 
 target_include_directories(
