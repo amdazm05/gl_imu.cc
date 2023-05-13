@@ -1,7 +1,15 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.0)
 project(gl_imu)
-execute_process(COMMAND setup.bat
+if(UNIX)
+execute_process(COMMAND bash setup.sh
                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+endif(UNIX)
+
+if(WIN32)
+    execute_process(COMMAND setup.sh
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+endif(WIN32)
+
 cmake_policy(SET CMP0115 OLD)
 set(CXX_STANDARD_REQUIRED 20)
 set(CMAKE_CXX_FLAGS "-std=c++20 -fcoroutines")
