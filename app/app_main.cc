@@ -11,7 +11,7 @@ int main()
 {
     glfwInit();
     WindowRenderComponent Window;
-    Window.add_callbacks(key_callback);
+    Window.add_keyboard_callback(key_callback);
     std::cout<<(uint64_t)(Window.getWindowInstance().get())<<std::endl;
 
     while (Window.isWindowComponentClosed())

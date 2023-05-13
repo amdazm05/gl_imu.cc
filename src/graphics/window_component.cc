@@ -55,7 +55,7 @@ std::shared_ptr<GladGLContext> WindowRenderComponent::getWindowContextInstance()
     return _WindowContext;
 }
 
-void WindowRenderComponent::add_callbacks(std::function<void(
+void WindowRenderComponent::add_keyboard_callback(std::function<void(
             GLFWwindow* window, 
             int key, 
             int scancode, 
