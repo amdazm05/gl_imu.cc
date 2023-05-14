@@ -47,6 +47,7 @@ add_library( ${PROJECT_NAME}
     # ${PROJECT_SOURCE_DIR}/src/sensors/wt931.cc
     ${PROJECT_SOURCE_DIR}/src/stream/serialstreamer.cc
     ${PROJECT_SOURCE_DIR}/src/graphics/window_component.cc
+    ${PROJECT_SOURCE_DIR}/src/graphics/cursors_component.cc
 )
 
 target_include_directories(
