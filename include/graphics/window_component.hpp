@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <functional>
+#include "util/functionutils.tpp"
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
@@ -10,26 +11,26 @@ class WindowRenderComponent : std::enable_shared_from_this<WindowRenderComponent
 {
     public:
         WindowRenderComponent();
-        WindowRenderComponent(int width,int height)
+        WindowRenderComponent(int width,int height);
         ~WindowRenderComponent();
         std::shared_ptr<WindowRenderComponent> getInstance();
         std::shared_ptr<GLFWwindow> getWindowInstance();
         std::shared_ptr<GladGLContext> getWindowContextInstance();
         bool isWindowComponentClosed();
         void renderWindow();
-        void add_keyboard_callback(std::function<void(
+        void add_keyboard_callback(void(*callback)(
             GLFWwindow* window, 
             int key, 
             int scancode, 
             int action, 
-            int mods)> callback);
+            int mods));
         void add_mouseposition_callback(std::function<void(
             GLFWwindow* window, 
             double xpos, 
             double ypos
         )>);
     private:
-        std::function<void(
+        function_utils::function_ptr<void(*)(
             GLFWwindow* window, 
             int key, 
             int scancode, 

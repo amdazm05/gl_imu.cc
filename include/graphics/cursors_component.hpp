@@ -3,7 +3,8 @@
 
 #include <glfw/glfw3.h>
 #include <memory>
-#include <iostream>
+#include <iostream>s
+#include "util/functionutils.tpp"
 
 class CursorsOptionsComponent: std::enable_shared_from_this<CursorsOptionsComponent>
 {
@@ -28,10 +29,12 @@ class CursorsOptionsComponent: std::enable_shared_from_this<CursorsOptionsCompon
         void setCursorMode(std::uint32_t CursorOptionsMode);
         void updateCursorPositionForceFully();
         void setWindowContext(std::shared_ptr<GLFWwindow> windowContext);
-        void setEnterExitCallbacks(std::function<void(GLFWwindow* window, int entered)>);
+        void setEnterExitCallbacks(void(*enterExitCallback)(GLFWwindow* window, int entered));
         
     private:
         /// @brief first is x , and second is y
+        std::function<void(GLFWwindow* window, int entered)> enterExitCallback;
+        function_utils::function_ptr<void(*)(GLFWwindow* window, int entered)> enterExitCallback_experimental;
         std::pair<double,double> _mousePosition;
         std::shared_ptr<GLFWwindow> _refWindowContext;
         std::shared_ptr<GLFWcursor> _cursorInstance;
