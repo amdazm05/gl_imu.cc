@@ -34,3 +34,5 @@ namespace function_utils
 }
 
 #endif //_DISPATCHER
+
+// https://godbolt.org/z/KW76T5TKz
