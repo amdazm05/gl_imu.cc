@@ -38,3 +38,9 @@ void CursorsOptionsComponent::setEnterExitCallbacks(void(*enterExitFunc)(GLFWwin
     this->enterExitCallback_experimental = enterExitFunc;
     glfwSetCursorEnterCallback(_refWindowContext.get(),enterExitCallback_experimental.get());
 }
+
+void CursorsOptionsComponent::setPositionCallbacks(void(*positionCallback)(GLFWwindow* window, double xpos, double ypos))
+{
+    this->positionCallback =  positionCallback;
+    glfwSetCursorPosCallback(_refWindowContext.get(),this->positionCallback.get());
+}

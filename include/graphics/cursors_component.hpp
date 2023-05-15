@@ -12,8 +12,8 @@ class CursorsOptionsComponent: std::enable_shared_from_this<CursorsOptionsCompon
         enum CursorOptions
         {
             DISABLE_CURSOR  =  GLFW_CURSOR_DISABLED  ,
-            NORMAL_CURSOR   =  GLFW_CURSOR_HIDDEN    ,
-            HIDDEN_CURSOR   =  GLFW_CURSOR_NORMAL    ,
+            HIDDEN_CURSOR   =  GLFW_CURSOR_HIDDEN    ,
+            NORMAL_CURSOR   =  GLFW_CURSOR_NORMAL    ,
         };
 
         /// @brief Use the standard cursor instance here
@@ -30,11 +30,12 @@ class CursorsOptionsComponent: std::enable_shared_from_this<CursorsOptionsCompon
         void updateCursorPositionForceFully();
         void setWindowContext(std::shared_ptr<GLFWwindow> windowContext);
         void setEnterExitCallbacks(void(*enterExitCallback)(GLFWwindow* window, int entered));
+        void setPositionCallbacks(void(*positionCallback)(GLFWwindow* window, double xpos, double ypos));
         
     private:
         /// @brief first is x , and second is y
         function_utils::function_ptr<void(*)(GLFWwindow* window, int entered)> enterExitCallback_experimental;
-        std::pair<double,double> _mousePosition;
+        function_utils::function_ptr<void(*)(GLFWwindow* window, double xpos, double ypos)> positionCallback;
         std::shared_ptr<GLFWwindow> _refWindowContext;
         std::shared_ptr<GLFWcursor> _cursorInstance;
         GLFWimage _image;
