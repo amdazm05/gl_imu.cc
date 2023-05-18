@@ -16,3 +16,6 @@
 [submodule "libs/glad"]
 	path = libs/glad
 	url = https://github.com/Dav1dde/glad.git
+[submodule "libs/freetype"]
+	path = libs/freetype
+	url = https://github.com/freetype/freetype.git
