@@ -28,6 +28,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/glew-cmake/include
     ${CMAKE_SOURCE_DIR}/libs/freetype/include
     ${CMAKE_SOURCE_DIR}/thirdparty/glad_core/include
+    ${CMAKE_SOURCE_DIR}/libs
     )
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/libs/freeglut)
@@ -58,7 +59,7 @@ target_include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC freeglut_static libglew_static glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a)
+target_link_libraries(${PROJECT_NAME} PUBLIC freeglut_static libglew_static glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
 add_executable(main
     ${PROJECT_SOURCE_DIR}/app/app_main.cc
 )

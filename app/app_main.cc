@@ -1,6 +1,7 @@
 #include <iostream>
 #include "graphics/window_component.hpp"
 #include "graphics/cursors_component.hpp"
+#include "graphics/text_component.hpp"
 
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
