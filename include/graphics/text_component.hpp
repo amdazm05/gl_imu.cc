@@ -16,6 +16,7 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         TextComponent(std::shared_ptr<GLFWwindow> windowInstance);
         TextComponent() = delete;
         ~TextComponent();
+        void init();
         void setTextFontProperties(std::uint8_t fontSize,std::string && fontInformation);
         void renderText(std::string && inputText,std::pair<double,double> renderPosition,std::tuple<uint8_t,uint8_t,uint8_t> color);
         std::shared_ptr<TextComponent> getInstance();
@@ -28,6 +29,9 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         FT_Library _library;
         FT_Face _face;
         FT_Error _errorhandle;
+        GLuint tex_handle;
+        int tex_width = _bitmap.width;
+        int tex_height = _bitmap.rows;
         std::unordered_map<char ,FT_UInt> _glyphIndexMap;
         std::shared_ptr<GLFWwindow> _windowContext;
 };
