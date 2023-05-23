@@ -1,7 +1,6 @@
 #ifndef _TEXTCOMPONENT
 #define _TEXTCOMPONENT
 
-#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H  
@@ -25,7 +24,6 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         void generateBitMapImage();
         void renderGlyph();
         function_utils::function_ptr<void(*)(GLFWwindow* window, unsigned int codepoint)> _characterCallback;
-        std::unordered_map<GLchar,char> _gltocharMap;
         FT_Bitmap _bitmap; 
         FT_Library _library;
         FT_Face _face;
