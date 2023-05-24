@@ -5,6 +5,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H  
 #include <memory>
+#include <iostream>
 #include <unordered_map>
 #include <string>
 

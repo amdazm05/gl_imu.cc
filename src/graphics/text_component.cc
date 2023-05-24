@@ -16,6 +16,7 @@ TextComponent::~TextComponent()
 
 void TextComponent::init()
 {
+    setTextFontProperties(20,"./assets/SFBold.ttf");
     renderGlyph();
     generateBitMapImage();
 
@@ -33,9 +34,7 @@ void TextComponent::init()
 
  void TextComponent::renderText(std::string && inputText,std::pair<double,double> renderPosition,std::tuple<uint8_t,uint8_t,uint8_t> color)
  {
-   
-    glfwMakeContextCurrent(_windowContext.get());
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     int win_width, win_height;
     glfwGetFramebufferSize(_windowContext.get(), &win_width, &win_height);
     glMatrixMode(GL_PROJECTION);
@@ -72,11 +71,11 @@ void TextComponent::setTextFontProperties(std::uint8_t fontSize,std::string && f
     _errorhandle = FT_New_Face(_library, fontInformation.c_str(),0,&_face);
     if(_errorhandle)
     {
-
+        std::cout<<"font \n";
     }
-    _errorhandle = FT_Set_Char_Size(_face, 0, (int)(fontSize * 64), 300, 300);
+    _errorhandle = FT_Set_Char_Size(_face, 0, (int)(fontSize * 1), 30, 30);
     if(_errorhandle)
     {
-
+        std::cout<<"char size font \n";
     }
 }
