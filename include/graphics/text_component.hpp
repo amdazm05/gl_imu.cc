@@ -3,6 +3,9 @@
 
 #include <GLFW/glfw3.h>
 #include <ft2build.h>
+#include <freetype/ftglyph.h>
+#include <freetype/ftoutln.h>
+#include <freetype/fttrigon.h>
 #include FT_FREETYPE_H  
 #include <memory>
 #include <iostream>
@@ -30,6 +33,7 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         FT_Library _library;
         FT_Face _face;
         FT_Error _errorhandle;
+        FT_Glyph _glyph;
         GLuint tex_handle;
         int tex_width = _bitmap.width;
         int tex_height = _bitmap.rows;

@@ -18,18 +18,7 @@ void TextComponent::init()
 {
     setTextFontProperties(20,"./assets/SFBold.ttf");
     renderGlyph();
-    generateBitMapImage();
-
-    glGenTextures(1, &tex_handle);
-    glBindTexture(GL_TEXTURE_2D, tex_handle);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex_width, tex_height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, _bitmap.buffer);
-    
+    // generateBitMapImage();    
 }
 
  void TextComponent::renderText(std::string && inputText,std::pair<double,double> renderPosition,std::tuple<uint8_t,uint8_t,uint8_t> color)
@@ -59,11 +48,76 @@ void TextComponent::generateBitMapImage()
     _bitmap = _face->glyph->bitmap;
 }
 
+int next_power_2( int a )
+{
+	int rval=1;
+	while(rval<a) rval<<=1;
+	return rval;
+}
+
 void TextComponent::renderGlyph()
 {
     FT_UInt glyph_index = FT_Get_Char_Index(_face, (FT_UInt32)('A'));
-    FT_Load_Glyph(_face, glyph_index, FT_LOAD_DEFAULT);
-    FT_Render_Glyph(_face->glyph, FT_RENDER_MODE_NORMAL);
+    if(FT_Load_Glyph(_face, glyph_index, FT_LOAD_DEFAULT))
+    {
+        std::cout<<"error loading glyph"<<std::endl;
+    }
+    if(FT_Get_Glyph(_face->glyph, &_glyph))
+    {
+        std::cout<<"error glyph load "<<std::endl;
+    }
+    FT_Glyph_To_Bitmap(&_glyph,ft_render_mode_normal,0,1);
+    FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph)_glyph;
+    FT_Bitmap& bitmap=bitmap_glyph->bitmap;
+
+    int width = next_power_2( bitmap.width );
+	int height = next_power_2( bitmap.rows );
+
+	//Allocate memory for the texture data.
+	GLubyte* expanded_data = new GLubyte[ 2 * width * height];
+
+	for(int j=0; j <height;j++) 
+    {
+		for(int i=0; i < width; i++)
+        {
+			expanded_data[2*(i+j*width)]= expanded_data[2*(i+j*width)+1] = 
+				(i>=bitmap.width || j>=bitmap.rows) ?
+				0 : bitmap.buffer[i + bitmap.width*j];
+		}
+    }
+
+    glBindTexture( GL_TEXTURE_2D, tex_handle);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+
+
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height,
+		  0, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, expanded_data );
+
+    delete [] expanded_data;
+    GLuint list_base=glGenLists(1);
+
+	glNewList(list_base+'a',GL_COMPILE);
+
+	glBindTexture(GL_TEXTURE_2D,tex_handle);
+
+	glTranslatef(bitmap_glyph->left,0,0);
+
+	glPushMatrix();
+	glTranslatef(0,bitmap_glyph->top-bitmap.rows,0);
+
+	float	x=(float)bitmap.width / (float)width,
+			y=(float)bitmap.rows / (float)height;
+
+	glBegin(GL_QUADS);
+	glTexCoord2d(0,0); glVertex2f(0,bitmap.rows);
+	glTexCoord2d(0,y); glVertex2f(0,0);
+	glTexCoord2d(x,y); glVertex2f(bitmap.width,0);
+	glTexCoord2d(x,0); glVertex2f(bitmap.width,bitmap.rows);
+	glEnd();
+	glPopMatrix();
+	glTranslatef(_face->glyph->advance.x >> 6 ,0,0);
+	glEndList();
 }
 
 void TextComponent::setTextFontProperties(std::uint8_t fontSize,std::string && fontInformation)
@@ -73,9 +127,10 @@ void TextComponent::setTextFontProperties(std::uint8_t fontSize,std::string && f
     {
         std::cout<<"font \n";
     }
-    _errorhandle = FT_Set_Char_Size(_face, 0, (int)(fontSize * 1), 30, 30);
+    // Freetype measures font size in terms of 1/64th of pixels.
+    _errorhandle = FT_Set_Char_Size(_face, (fontSize<<6), (fontSize)<<6 , 30, 30);
     if(_errorhandle)
     {
         std::cout<<"char size font \n";
-    }
+    }    
 }
