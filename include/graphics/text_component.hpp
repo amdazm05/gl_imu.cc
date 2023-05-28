@@ -42,3 +42,6 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
 };
 
 #endif //_TEXTCOMPONENT
+
+
+//Continue reading https://www.sccs.swarthmore.edu/users/03/sven/freetype_tut/
