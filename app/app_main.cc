@@ -30,7 +30,6 @@ int main()
     WindowRenderComponent Window;
     CursorsOptionsComponent Cursor(Window.getWindowInstance());
     TextComponent text(Window.getWindowInstance());
-    text.init();
     Cursor.setEnterExitCallbacks(cursor_enter_callback);
     Window.add_keyboard_callback(key_callback);
     std::cout<<(uint64_t)(Window.getWindowInstance().get())<<std::endl;
@@ -40,7 +39,6 @@ int main()
         glfwPollEvents();
         glfwMakeContextCurrent(Window.getWindowInstance().get());
         Window.renderWindow();
-        text.renderText("asd",{0,0},{255,255,255});
         glfwSwapBuffers(Window.getWindowInstance().get());
 
     }
