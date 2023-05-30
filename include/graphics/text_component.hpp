@@ -6,6 +6,9 @@
 #include <freetype/ftglyph.h>
 #include <freetype/ftoutln.h>
 #include <freetype/fttrigon.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 #include FT_FREETYPE_H  
 #include <memory>
 #include <iostream>
@@ -21,6 +24,7 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         TextComponent() = delete;
         ~TextComponent();
         void init(std::string && fontFile, uint32_t textheight);
+        void printtxt(std::string && text, std::pair<float, float> position);
         std::shared_ptr<TextComponent> getInstance();
     private:
         /// @brief 

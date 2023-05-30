@@ -128,3 +128,20 @@ void TextComponent::make_display_lists(char character, FT_Face faceCpy)
 	glEndList();
 
 }
+
+inline void pushScreenCoordinateMatrix() {
+	glPushAttrib(GL_TRANSFORM_BIT);
+	GLint	viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(viewport[0],viewport[2],viewport[1],viewport[3]);
+	glPopAttrib();
+}
+inline void popProjectionMatrix() {
+	glPushAttrib(GL_TRANSFORM_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glPopAttrib();
+}
