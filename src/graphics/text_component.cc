@@ -145,3 +145,36 @@ inline void popProjectionMatrix() {
 	glPopMatrix();
 	glPopAttrib();
 }
+
+void TextComponent::printtxt(std::string && text ,std::pair<float,float> position)  
+{
+	
+	pushScreenCoordinateMatrix();						
+	GLuint font= _listbase;
+
+	glPushAttrib(GL_LIST_BIT | GL_CURRENT_BIT  | GL_ENABLE_BIT | GL_TRANSFORM_BIT);	
+	glMatrixMode(GL_MODELVIEW);
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	
+
+	glListBase(font);
+
+	float modelview_matrix[16];	
+	glGetFloatv(GL_MODELVIEW_MATRIX, modelview_matrix);	
+
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(position.first,position.second,0);
+    glMultMatrixf(modelview_matrix);
+
+    // glCallLists(lines[i].length(), GL_UNSIGNED_BYTE, lines[i].c_str());
+	//	float rpos[4];
+	//	glGetFloatv(GL_CURRENT_RASTER_POSITION ,rpos);
+	//	float len=x-rpos[0];
+    glPopMatrix();
+	popProjectionMatrix();
+}
+
