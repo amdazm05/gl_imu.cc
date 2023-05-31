@@ -1,13 +1,13 @@
 #ifndef _TEXTCOMPONENT
 #define _TEXTCOMPONENT
 
+#include <GL/freeglut.h>
+#include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include <ft2build.h>
 #include <freetype/ftglyph.h>
 #include <freetype/ftoutln.h>
 #include <freetype/fttrigon.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 
 #include FT_FREETYPE_H  
 #include <memory>
@@ -42,6 +42,9 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         std::shared_ptr<GLFWwindow> _windowContext;
         uint32_t _textheight;
         
+        //font height
+        float _height;
+
         //Glyph and bitmap members
         FT_Glyph _glyph;
         //Bit Map

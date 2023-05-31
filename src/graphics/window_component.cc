@@ -33,7 +33,7 @@ bool WindowRenderComponent::isWindowComponentClosed()
 void WindowRenderComponent::renderWindow()
 {
     // _WindowContext->ClearColor(0, 0.9, 0, 1.0f);
-    _WindowContext->Clear(GL_COLOR_BUFFER_BIT);
+    _WindowContext->Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 std::shared_ptr<WindowRenderComponent> WindowRenderComponent::getInstance()

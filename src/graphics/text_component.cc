@@ -2,7 +2,12 @@
 
 TextComponent::TextComponent(std::shared_ptr<GLFWwindow> windowInstance)
 {
-
+        glShadeModel(GL_SMOOTH);							
+        glClearColor(0.0f, 0.1f, 0.0f, 0.5f);				
+        glClearDepth(1.0f);									
+        glEnable(GL_DEPTH_TEST);							
+        glDepthFunc(GL_LEQUAL);								
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	
 }
 TextComponent::~TextComponent()
 {
@@ -19,6 +24,7 @@ inline int neares_pow_2(int a)
 void TextComponent::init(std::string && fontFile, uint32_t textheight)
 {
     // allocate textures 128 characters in total
+    _height = textheight;
     _textures = std::shared_ptr<GLuint>(new GLuint[CHAR_MAX_COUNT],[](GLuint * d){delete[] d;});
     // Load library
     _error = FT_Init_FreeType(&_library);
@@ -129,7 +135,7 @@ void TextComponent::make_display_lists(char character, FT_Face faceCpy)
 
 }
 
-inline void pushScreenCoordinateMatrix() {
+void pushScreenCoordinateMatrix() {
 	glPushAttrib(GL_TRANSFORM_BIT);
 	GLint	viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -139,7 +145,7 @@ inline void pushScreenCoordinateMatrix() {
 	gluOrtho2D(viewport[0],viewport[2],viewport[1],viewport[3]);
 	glPopAttrib();
 }
-inline void popProjectionMatrix() {
+void popProjectionMatrix() {
 	glPushAttrib(GL_TRANSFORM_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -148,7 +154,12 @@ inline void popProjectionMatrix() {
 
 void TextComponent::printtxt(std::string && text ,std::pair<float,float> position)  
 {
-	
+	float heightAdjusted =  _height/.63f;
+    glColor3ub(0,0,0xff);
+    glPushMatrix();
+	glLoadIdentity();
+	glScalef(1,.8+.3,1);
+	glTranslatef(-120,0,0);
 	pushScreenCoordinateMatrix();						
 	GLuint font= _listbase;
 
@@ -169,12 +180,11 @@ void TextComponent::printtxt(std::string && text ,std::pair<float,float> positio
     glLoadIdentity();
     glTranslatef(position.first,position.second,0);
     glMultMatrixf(modelview_matrix);
-
-    // glCallLists(lines[i].length(), GL_UNSIGNED_BYTE, lines[i].c_str());
-	//	float rpos[4];
-	//	glGetFloatv(GL_CURRENT_RASTER_POSITION ,rpos);
-	//	float len=x-rpos[0];
+    glCallLists(text.length(), GL_UNSIGNED_BYTE, text.c_str());
     glPopMatrix();
+    glPopAttrib();
+
 	popProjectionMatrix();
+    glPopMatrix();
 }
 
