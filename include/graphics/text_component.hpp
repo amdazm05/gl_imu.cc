@@ -68,3 +68,4 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
 
 //https://github.com/martinruenz/freetype-gl-cpp/tree/master
 //Continue reading https://www.sccs.swarthmore.edu/users/03/sven/freetype_tut/
+//https://learnopengl.com/code_viewer_gh.php?code=src/7.in_practice/2.text_rendering/text_rendering.cpp
