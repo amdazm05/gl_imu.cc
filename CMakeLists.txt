@@ -38,6 +38,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/libs/freeglut)
 add_subdirectory(${PROJECT_SOURCE_DIR}/libs/glfw)
 add_subdirectory(${PROJECT_SOURCE_DIR}/libs/glew-cmake)
 add_subdirectory(${PROJECT_SOURCE_DIR}/libs/freetype)
+add_subdirectory(${PROJECT_SOURCE_DIR}/libs/glm)
 
 if(EnableTests)
 add_subdirectory(${PROJECT_SOURCE_DIR}/libs/googletest)
@@ -63,7 +64,7 @@ target_include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${OPENGL_LIBRARIES} freeglut_static libglew_static glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
+target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm ${OPENGL_LIBRARIES} freeglut_static libglew_static glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
 add_executable(main
     ${PROJECT_SOURCE_DIR}/app/app_main.cc
 )
