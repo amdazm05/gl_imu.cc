@@ -2,12 +2,7 @@
 
 TextComponent::TextComponent(std::shared_ptr<GLFWwindow> windowInstance)
 {
-        glShadeModel(GL_SMOOTH);							
-        glClearColor(0.0f, 0.1f, 0.0f, 0.5f);				
-        glClearDepth(1.0f);									
-        glEnable(GL_DEPTH_TEST);							
-        glDepthFunc(GL_LEQUAL);								
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	
+
 }
 TextComponent::~TextComponent()
 {
@@ -82,10 +77,40 @@ void TextComponent::make_display_lists(char c)
                 glm::ivec2(_face->glyph->bitmap_left, _face->glyph->bitmap_top),
                 static_cast<unsigned int>(_face->glyph->advance.x)
             };
+    // Why copy if you can move
     _charactermap.insert(std::pair<char, Character>(c, std::move(character)));
 }
 
 void TextComponent::printtxt(std::string && text ,std::pair<float,float> position)  
 {
+    std::string::const_iterator c;
+    for (c = text.begin(); c != text.end(); c++) 
+    {
+        Character ch = _charactermap[*c];
+
+        float xpos = position.first + ch.Bearing.x * 1.0f;
+        float ypos = position.second - (ch.Size.y - ch.Bearing.y) * 1.0f;
+
+        float w = ch.Size.x * 1.0f;
+        float h = ch.Size.y * 1.0f;
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },            
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }           
+        };
+
+        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        position.first += (ch.Advance >> 6) * 1.0f; 
+    }
+
+
 }
 

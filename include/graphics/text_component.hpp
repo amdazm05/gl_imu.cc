@@ -1,8 +1,9 @@
 #ifndef _TEXTCOMPONENT
 #define _TEXTCOMPONENT
 
-#include <GL/freeglut.h>
+#define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
+#include <GL/glext.h>
 #include <GLFW/glfw3.h>
 #include <ft2build.h>
 #include <freetype/ftglyph.h>
@@ -22,6 +23,9 @@
 #include "util/functionutils.tpp"
 
 #define GL_CLAMP_TO_EDGE 0x812F
+#ifndef GL_ARRAY_BUFFER
+#define GL_ARRAY_BUFFER 0x8892
+#endif
 /// Holds all state information relevant to a character as loaded using FreeType
 struct Character 
 {
