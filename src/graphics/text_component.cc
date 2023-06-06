@@ -1,8 +1,9 @@
 #include "graphics/text_component.hpp"
 
-TextComponent::TextComponent(std::shared_ptr<GLFWwindow> windowInstance)
+TextComponent::TextComponent(std::shared_ptr<GLFWwindow> windowInstance, std::shared_ptr<GladGLContext> windowContext)
 {
-
+    _window = windowInstance;
+    _windowContext = windowContext;
 }
 TextComponent::~TextComponent()
 {
@@ -37,8 +38,8 @@ void TextComponent::init(std::string && fontFile, uint32_t textheight)
     else
     {
         FT_Set_Pixel_Sizes(_face,0,48);
-        _WindowContext->PixelStorei(GL_UNPACK_ALIGNMENT,1);
-        for(char c =0 ;c< CHAR_MAX_COUNT;c++)
+        _windowContext->PixelStorei(GL_UNPACK_ALIGNMENT,1);
+        for(unsigned char c =0 ;c< CHAR_MAX_COUNT;c++)
             make_display_lists(c);
 
     }
@@ -53,9 +54,9 @@ void TextComponent::make_display_lists(char c)
     }
 
     unsigned int texture;
-    _WindowContext->GenTextures(1, &texture);
-    _WindowContext->BindTexture(GL_TEXTURE_2D, texture);
-    _WindowContext->TexImage2D(
+    _windowContext->GenTextures(1, &texture);
+    _windowContext->BindTexture(GL_TEXTURE_2D, texture);
+    _windowContext->TexImage2D(
         GL_TEXTURE_2D,
         0,
         GL_RED,
@@ -67,10 +68,10 @@ void TextComponent::make_display_lists(char c)
         _face->glyph->bitmap.buffer
     );
 
-    _WindowContext->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    _WindowContext->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    _WindowContext->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    _WindowContext->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    _windowContext->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    _windowContext->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    _windowContext->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    _windowContext->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     Character character = {
                 texture,
                 glm::ivec2(_face->glyph->bitmap.width, _face->glyph->bitmap.rows),
@@ -103,10 +104,10 @@ void TextComponent::printtxt(std::string && text ,std::pair<float,float> positio
             { xpos + w, ypos + h,   1.0f, 0.0f }           
         };
 
-        _WindowContext->BindTexture(GL_TEXTURE_2D, ch.TextureID);
-        _WindowContext->BufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        _WindowContext->BindBuffer(GL_ARRAY_BUFFER, 0);
-        _WindowContext->DrawArrays(GL_TRIANGLES, 0, 6);
+        _windowContext->BindTexture(GL_TEXTURE_2D, ch.TextureID);
+        _windowContext->BufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        _windowContext->BindBuffer(GL_ARRAY_BUFFER, 0);
+        _windowContext->DrawArrays(GL_TRIANGLES, 0, 6);
         position.first += (ch.Advance >> 6) * 1.0f; 
     }
 
