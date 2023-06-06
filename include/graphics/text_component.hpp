@@ -1,9 +1,7 @@
 #ifndef _TEXTCOMPONENT
 #define _TEXTCOMPONENT
 
-#define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <ft2build.h>
 #include <freetype/ftglyph.h>
@@ -74,7 +72,7 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         FT_Error _error;
 
         std::unordered_map<char , Character> _charactermap;
-        
+        std::shared_ptr<GladGLContext> _WindowContext;
         // Max character count
         static constexpr uint8_t CHAR_MAX_COUNT = 128;
         

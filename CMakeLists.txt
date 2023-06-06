@@ -15,10 +15,6 @@ set(CXX_STANDARD_REQUIRED 20)
 set(CMAKE_CXX_FLAGS "-std=c++20 -fcoroutines")
 
 option(EnableTests "Tests are Disabled" OFF)
-
-find_package(OpenGL REQUIRED)
-
-
 option(GLFW_BUILD_EXAMPLES "Disabled examples from GLFW" OFF)
 option(GLFW_BUILD_TESTS "Disabled GLFW Testss" OFF)
 option(GLFW_BUILD_DOCS "Not building GLFW build docs" OFF)
@@ -64,7 +60,7 @@ target_include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm ${OPENGL_LIBRARIES} freeglut_static libglew_static glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_BINARY_DIR}/libs/glew-cmake/lib/libglew.a OpenGL32 GLU32 glm::glm freeglut_static  glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
 add_executable(main
     ${PROJECT_SOURCE_DIR}/app/app_main.cc
 )
