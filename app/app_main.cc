@@ -30,19 +30,18 @@ int main()
     WindowRenderComponent Window;
     CursorsOptionsComponent Cursor(Window.getWindowInstance());
     TextComponent text(Window.getWindowInstance(),Window.getWindowContextInstance());
-    text.init("./assets/SFBold.ttf",16);
+    text.init("Antonio.ttf",16);
     Cursor.setEnterExitCallbacks(cursor_enter_callback);
     Window.add_keyboard_callback(key_callback);
     std::cout<<(uint64_t)(Window.getWindowInstance().get())<<std::endl;
 
     while (Window.isWindowComponentClosed())
     {
-        glfwPollEvents();
-        glfwMakeContextCurrent(Window.getWindowInstance().get());
         Window.renderWindow();
-        
-        text.printtxt("Something",{100,100});
+        text.printtxt("Something",{25.0f, 25.0f});
+        text.printtxt("Something",{100.0f, 25.0f});
         glfwSwapBuffers(Window.getWindowInstance().get());
+        glfwPollEvents();
 
     }
 

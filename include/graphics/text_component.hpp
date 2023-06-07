@@ -20,10 +20,6 @@
 
 #include "util/functionutils.tpp"
 
-#define GL_CLAMP_TO_EDGE 0x812F
-#ifndef GL_ARRAY_BUFFER
-#define GL_ARRAY_BUFFER 0x8892
-#endif
 /// Holds all state information relevant to a character as loaded using FreeType
 struct Character 
 {
@@ -75,6 +71,9 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         std::unordered_map<char , Character> _charactermap;
         // Max character count
         static constexpr uint8_t CHAR_MAX_COUNT = 128;
+        int _shaderId;
+        unsigned int _VBO;
+        unsigned int _VAO;
         
     public:
         friend int neares_pow_2(int a);

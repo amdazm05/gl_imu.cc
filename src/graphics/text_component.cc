@@ -1,5 +1,54 @@
 #include "graphics/text_component.hpp"
 
+static std::string vertexShader = "#version 330 core\n"
+"layout (location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>\n"
+"out vec2 TexCoords;\n"
+"\n"
+"uniform mat4 projection;\n"
+"\n"
+"void main()\n"
+"{\n"
+"    gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);\n"
+"    TexCoords = vertex.zw;\n"
+"}";
+
+static std::string fragmentShader = "#version 330 core\n"
+"in vec2 TexCoords;\n"
+"out vec4 color;\n"
+"\n"
+"uniform sampler2D text;\n"
+"uniform vec3 textColor;\n"
+"\n"
+"void main()\n"
+"{    \n"
+"    vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);\n"
+"    color = vec4(textColor, 1.0) * sampled;\n"
+"}";
+
+static void checkCompileErrors(GladGLContext *WindowContext,GLuint shader, std::string type)
+{
+    GLint success;
+    GLchar infoLog[1024];
+    if(type != "PROGRAM")
+    {
+        WindowContext->GetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        if(!success)
+        {
+            WindowContext->GetShaderInfoLog(shader, 1024, NULL, infoLog);
+            std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+        }
+    }
+    else
+    {
+        WindowContext->GetProgramiv(shader, GL_LINK_STATUS, &success);
+        if(!success)
+        {
+            WindowContext->GetProgramInfoLog(shader, 1024, NULL, infoLog);
+            std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+        }
+    }
+}
+
 TextComponent::TextComponent(std::shared_ptr<GLFWwindow> windowInstance, std::shared_ptr<GladGLContext> windowContext)
 {
     _window = windowInstance;
@@ -19,6 +68,34 @@ inline int neares_pow_2(int a)
 
 void TextComponent::init(std::string && fontFile, uint32_t textheight)
 {
+
+    unsigned int vertex, fragment;
+    const char * vertSh = vertexShader.c_str();
+    const char * fragSh = fragmentShader.c_str();
+    // vertex shader
+    vertex = _windowContext->CreateShader(GL_VERTEX_SHADER);
+    _windowContext->ShaderSource(vertex, 1,   &vertSh , NULL);
+    _windowContext->CompileShader(vertex);
+    checkCompileErrors(_windowContext.get(),vertex, "VERTEX");
+    // fragment Shader
+    fragment = _windowContext->CreateShader(GL_FRAGMENT_SHADER);
+    _windowContext->ShaderSource(fragment, 1, &fragSh, NULL);
+    _windowContext->CompileShader(fragment);
+    checkCompileErrors(_windowContext.get(),fragment, "FRAGMENT");
+    // shader Program
+    _shaderId = _windowContext->CreateProgram();
+    _windowContext->AttachShader(_shaderId, vertex);
+    _windowContext->AttachShader(_shaderId, fragment);
+    _windowContext->LinkProgram(_shaderId);
+    checkCompileErrors(_windowContext.get(),_shaderId, "LINK");
+    // delete the shaders as they're linked into our program now and no longer necessary
+    _windowContext->DeleteShader(vertex);
+    _windowContext->DeleteShader(fragment);
+
+    // to fix later
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(800), 0.0f, static_cast<float>(600));
+    _windowContext->UseProgram(_shaderId); 
+    _windowContext->UniformMatrix4fv(_windowContext->GetUniformLocation(_shaderId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     // allocate textures 128 characters in total
     _height = textheight;
     _textures = std::shared_ptr<GLuint>(new GLuint[CHAR_MAX_COUNT],[](GLuint * d){delete[] d;});
@@ -42,7 +119,24 @@ void TextComponent::init(std::string && fontFile, uint32_t textheight)
         for(unsigned char c =0 ;c< CHAR_MAX_COUNT;c++)
             make_display_lists(c);
 
+        _windowContext->BindTexture(GL_TEXTURE_2D, 0);
     }
+    // destroy FreeType once we're finished
+    FT_Done_Face(_face);
+    FT_Done_FreeType(_library);
+
+    // configure VAO/VBO for texture quads
+    // -----------------------------------
+    _windowContext->GenVertexArrays(1, &_VAO);
+    _windowContext->GenBuffers(1, &_VBO);
+    _windowContext->BindVertexArray(_VAO);
+    _windowContext->BindBuffer(GL_ARRAY_BUFFER, _VBO);
+    _windowContext->BufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    _windowContext->EnableVertexAttribArray(0);
+    _windowContext->VertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    _windowContext->BindBuffer(GL_ARRAY_BUFFER, 0);
+    _windowContext->BindVertexArray(0);
+    
 }
 
 void TextComponent::make_display_lists(char c)
@@ -84,6 +178,13 @@ void TextComponent::make_display_lists(char c)
 
 void TextComponent::printtxt(std::string && text ,std::pair<float,float> position)  
 {
+    _windowContext->Enable(GL_BLEND);
+    _windowContext->BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    _windowContext->Disable(GL_DEPTH_TEST);
+    _windowContext->UseProgram(_shaderId);
+    _windowContext->Uniform3f(_windowContext->GetUniformLocation(_shaderId, "textColor"), 0.5, 0.8f, 0.2f);
+    _windowContext->ActiveTexture(GL_TEXTURE0);
+    _windowContext->BindVertexArray(_VAO);
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++) 
     {
@@ -105,12 +206,15 @@ void TextComponent::printtxt(std::string && text ,std::pair<float,float> positio
         };
 
         _windowContext->BindTexture(GL_TEXTURE_2D, ch.TextureID);
+        _windowContext->BindBuffer(GL_ARRAY_BUFFER, _VBO);
         _windowContext->BufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         _windowContext->BindBuffer(GL_ARRAY_BUFFER, 0);
         _windowContext->DrawArrays(GL_TRIANGLES, 0, 6);
         position.first += (ch.Advance >> 6) * 1.0f; 
     }
-
+    _windowContext->BindVertexArray(0);
+    _windowContext->BindTexture(GL_TEXTURE_2D, 0);
+    _windowContext->Enable(GL_DEPTH_TEST);
 
 }
 

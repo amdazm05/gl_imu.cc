@@ -1,5 +1,6 @@
 #include "graphics/window_component.hpp"
 #include <iostream>
+
 WindowRenderComponent::WindowRenderComponent()
 {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -7,7 +8,7 @@ WindowRenderComponent::WindowRenderComponent()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     //Adding a custom deleter resolves assertions and makes this safer 
-    _Window = std::shared_ptr<GLFWwindow>(glfwCreateWindow(480, 480, "Window23", NULL, NULL)
+    _Window = std::shared_ptr<GLFWwindow>(glfwCreateWindow(800, 600, "Window23", NULL, NULL)
         ,[](GLFWwindow*window)
         {
             glfwDestroyWindow(window);
@@ -17,7 +18,7 @@ WindowRenderComponent::WindowRenderComponent()
     _WindowContext = std::make_shared<GladGLContext>(new GladGLContext[1]());
     gladLoadGLContext(_WindowContext.get(), glfwGetProcAddress);
     glfwMakeContextCurrent(_Window.get());
-    _WindowContext->Viewport(0, 0, 480, 480);
+    _WindowContext->Viewport(0,0,800,600);
 }
 
 WindowRenderComponent::~WindowRenderComponent()
@@ -33,7 +34,8 @@ bool WindowRenderComponent::isWindowComponentClosed()
 void WindowRenderComponent::renderWindow()
 {
     // _WindowContext->ClearColor(0, 0.9, 0, 1.0f);
-    _WindowContext->Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    _WindowContext->ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    _WindowContext->Clear(GL_COLOR_BUFFER_BIT);
 }
 
 std::shared_ptr<WindowRenderComponent> WindowRenderComponent::getInstance()
