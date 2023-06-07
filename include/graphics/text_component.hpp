@@ -36,7 +36,7 @@ struct Character
 class TextComponent : std::enable_shared_from_this<TextComponent>
 {
     public:
-        TextComponent(std::shared_ptr<GLFWwindow> windowInstance);
+        TextComponent(std::shared_ptr<GLFWwindow> windowInstance, std::shared_ptr<GladGLContext> windowContext);
         TextComponent() = delete;
         ~TextComponent();
         void init(std::string && fontFile, uint32_t textheight);
@@ -55,7 +55,8 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         /// @brief is a number of the contiguou lists returned by GL allocation
         GLuint _listbase;
         std::shared_ptr<GLuint> _textures;
-        std::shared_ptr<GLFWwindow> _windowContext;
+        std::shared_ptr<GLFWwindow> _window;
+        std::shared_ptr<GladGLContext> _windowContext;
         uint32_t _textheight;
         
         //font height
@@ -72,7 +73,6 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         FT_Error _error;
 
         std::unordered_map<char , Character> _charactermap;
-        std::shared_ptr<GladGLContext> _WindowContext;
         // Max character count
         static constexpr uint8_t CHAR_MAX_COUNT = 128;
         

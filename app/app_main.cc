@@ -29,8 +29,8 @@ int main()
     glfwInit();
     WindowRenderComponent Window;
     CursorsOptionsComponent Cursor(Window.getWindowInstance());
-    TextComponent text(Window.getWindowInstance());
-    text.init("./test.ttf",16);
+    TextComponent text(Window.getWindowInstance(),Window.getWindowContextInstance());
+    text.init("./assets/SFBold.ttf",16);
     Cursor.setEnterExitCallbacks(cursor_enter_callback);
     Window.add_keyboard_callback(key_callback);
     std::cout<<(uint64_t)(Window.getWindowInstance().get())<<std::endl;
