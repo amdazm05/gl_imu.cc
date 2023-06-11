@@ -1,7 +1,8 @@
 #ifndef _CURSORS_COMPONENT
 #define _CURSORS_COMPONENT
 
-#include <glfw/glfw3.h>
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 #include <memory>
 #include <iostream>
 #include "util/functionutils.tpp"

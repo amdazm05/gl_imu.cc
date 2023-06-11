@@ -6,7 +6,7 @@ execute_process(COMMAND bash setup.sh
 endif(UNIX)
 
 if(WIN32)
-    execute_process(COMMAND setup.sh
+    execute_process(COMMAND setup.bat
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif(WIN32)
 
@@ -52,6 +52,7 @@ add_library( ${PROJECT_NAME}
     ${PROJECT_SOURCE_DIR}/src/graphics/window_component.cc
     ${PROJECT_SOURCE_DIR}/src/graphics/cursors_component.cc
     ${PROJECT_SOURCE_DIR}/src/graphics/text_component.cc
+    ${PROJECT_SOURCE_DIR}/src/graphics/shader_handler.cc
 )
 
 target_include_directories(
@@ -60,7 +61,7 @@ target_include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_BINARY_DIR}/libs/glew-cmake/lib/libglewd.a glm::glm freeglut_static  glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
+target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm freeglut_static  glfw3 ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
 add_executable(main
     ${PROJECT_SOURCE_DIR}/app/app_main.cc
 )
