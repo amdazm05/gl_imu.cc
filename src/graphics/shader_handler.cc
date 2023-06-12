@@ -7,7 +7,7 @@ ShaderHandler::ShaderHandler
 (
     std::string && vertexShaderSourcePath,
     std::string && fragmentShaderSourcePath,
-    std::string && geometryShaderSourcePath = nullptr,
+    std::string && geometryShaderSourcePath,
     std::shared_ptr<GladGLContext> windowContext
 ):
  _fragmentShaderFileHandle(FILE_ALLOCATOR(fragmentShaderSourcePath),FILE_DELETER),

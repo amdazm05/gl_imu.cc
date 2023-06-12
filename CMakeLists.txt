@@ -61,7 +61,7 @@ target_include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm freeglut_static  glfw3 ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
+target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm freeglut_static  glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
 add_executable(main
     ${PROJECT_SOURCE_DIR}/app/app_main.cc
 )
