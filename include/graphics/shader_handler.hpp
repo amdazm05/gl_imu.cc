@@ -34,6 +34,10 @@ class ShaderHandler : std::enable_shared_from_this<ShaderHandler>
         std::string _linkStatus;
         std::string _vertSh;
         std::string _fragSh;
+
+        void checkForLinkErrors();
+        void checkForCompileErrors();
+        
         uint32_t compileShaders() noexcept;
         uint32_t linkShaders() noexcept;
         std::unique_ptr<std::ifstream,void(*)(std::ifstream *)> _vertexShaderFileHandle; 

@@ -10,6 +10,8 @@ if(WIN32)
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif(WIN32)
 
+file(COPY ${PROJECT_SOURCE_DIR}/src/shaders/ DESTINATION ${CMAKE_BINARY_DIR}/shaders)
+
 cmake_policy(SET CMP0115 OLD)
 set(CXX_STANDARD_REQUIRED 20)
 set(CMAKE_CXX_FLAGS "-std=c++20 -fcoroutines")
