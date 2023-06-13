@@ -1,55 +1,7 @@
 #include "graphics/text_component.hpp"
 
-static std::string vertexShader = "#version 330 core\n"
-"layout (location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>\n"
-"out vec2 TexCoords;\n"
-"\n"
-"uniform mat4 projection;\n"
-"\n"
-"void main()\n"
-"{\n"
-"    gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);\n"
-"    TexCoords = vertex.zw;\n"
-"}";
-
-static std::string fragmentShader = "#version 330 core\n"
-"in vec2 TexCoords;\n"
-"out vec4 color;\n"
-"\n"
-"uniform sampler2D text;\n"
-"uniform vec3 textColor;\n"
-"\n"
-"void main()\n"
-"{    \n"
-"    vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);\n"
-"    color = vec4(textColor, 1.0) * sampled;\n"
-"}";
-
-static void checkCompileErrors(GladGLContext *WindowContext,GLuint shader, std::string type)
-{
-    GLint success;
-    GLchar infoLog[1024];
-    if(type != "PROGRAM")
-    {
-        WindowContext->GetShaderiv(shader, GL_COMPILE_STATUS, &success);
-        if(!success)
-        {
-            WindowContext->GetShaderInfoLog(shader, 1024, NULL, infoLog);
-            std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
-        }
-    }
-    else
-    {
-        WindowContext->GetProgramiv(shader, GL_LINK_STATUS, &success);
-        if(!success)
-        {
-            WindowContext->GetProgramInfoLog(shader, 1024, NULL, infoLog);
-            std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
-        }
-    }
-}
-
 TextComponent::TextComponent(std::shared_ptr<GLFWwindow> windowInstance, std::shared_ptr<GladGLContext> windowContext)
+: _shaderHandler("./shaders/textFrag.fs","./shaders/textVertex.vs","",windowContext)
 {
     _window = windowInstance;
     _windowContext = windowContext;
@@ -69,33 +21,10 @@ inline int neares_pow_2(int a)
 void TextComponent::init(std::string && fontFile, uint32_t textheight)
 {
 
-    unsigned int vertex, fragment;
-    const char * vertSh = vertexShader.c_str();
-    const char * fragSh = fragmentShader.c_str();
-    // vertex shader
-    vertex = _windowContext->CreateShader(GL_VERTEX_SHADER);
-    _windowContext->ShaderSource(vertex, 1,   &vertSh , NULL);
-    _windowContext->CompileShader(vertex);
-    checkCompileErrors(_windowContext.get(),vertex, "VERTEX");
-    // fragment Shader
-    fragment = _windowContext->CreateShader(GL_FRAGMENT_SHADER);
-    _windowContext->ShaderSource(fragment, 1, &fragSh, NULL);
-    _windowContext->CompileShader(fragment);
-    checkCompileErrors(_windowContext.get(),fragment, "FRAGMENT");
-    // shader Program
-    _shaderId = _windowContext->CreateProgram();
-    _windowContext->AttachShader(_shaderId, vertex);
-    _windowContext->AttachShader(_shaderId, fragment);
-    _windowContext->LinkProgram(_shaderId);
-    checkCompileErrors(_windowContext.get(),_shaderId, "LINK");
-    // delete the shaders as they're linked into our program now and no longer necessary
-    _windowContext->DeleteShader(vertex);
-    _windowContext->DeleteShader(fragment);
-
-    // to fix later
+    _shaderHandler.generateShaderProgram();
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(800), 0.0f, static_cast<float>(600));
-    _windowContext->UseProgram(_shaderId); 
-    _windowContext->UniformMatrix4fv(_windowContext->GetUniformLocation(_shaderId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    _shaderHandler.useProgram();
+    _windowContext->UniformMatrix4fv(_windowContext->GetUniformLocation(_shaderHandler.getShaderId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     // allocate textures 128 characters in total
     _height = textheight;
     _textures = std::shared_ptr<GLuint>(new GLuint[CHAR_MAX_COUNT],[](GLuint * d){delete[] d;});
@@ -181,8 +110,8 @@ void TextComponent::printtxt(std::string && text ,std::pair<float,float> positio
     _windowContext->Enable(GL_BLEND);
     _windowContext->BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     _windowContext->Disable(GL_DEPTH_TEST);
-    _windowContext->UseProgram(_shaderId);
-    _windowContext->Uniform3f(_windowContext->GetUniformLocation(_shaderId, "textColor"), 0.5, 0.8f, 0.2f);
+    _shaderHandler.useProgram();
+    _windowContext->Uniform3f(_windowContext->GetUniformLocation(_shaderHandler.getShaderId(), "textColor"), 0.5, 0.8f, 0.2f);
     _windowContext->ActiveTexture(GL_TEXTURE0);
     _windowContext->BindVertexArray(_VAO);
     std::string::const_iterator c;

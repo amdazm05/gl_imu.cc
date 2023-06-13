@@ -30,12 +30,16 @@ ShaderHandler::ShaderHandler
 
 void ShaderHandler::generateShaderProgram() noexcept
 {
+    std::stringstream bufferStream;
     if(_fragmentShaderFileHandle->is_open() && _vertexShaderFileHandle->is_open())
     {
-        *_fragmentShaderFileHandle  >>_vertSh;
-        *_vertexShaderFileHandle    >>_fragSh;
+        bufferStream << (*_fragmentShaderFileHandle).rdbuf();
+        _fragSh.append(bufferStream.str());
+        bufferStream.str("");
+        bufferStream << (*_vertexShaderFileHandle).rdbuf();
+        _vertSh.append(bufferStream.str());
+        bufferStream.str("");
     }
-    
     if(_vertSh.c_str()!=nullptr && _fragSh.c_str()!=nullptr)
     {
         // Create Shaders
@@ -43,6 +47,9 @@ void ShaderHandler::generateShaderProgram() noexcept
         _fragment = _windowContext->CreateShader(GL_FRAGMENT_SHADER);
         compileShaders();
         linkShaders();
+
+        _windowContext->DeleteShader(_vertex);
+        _windowContext->DeleteShader(_fragment);
     }
 
 }
@@ -50,25 +57,29 @@ void ShaderHandler::generateShaderProgram() noexcept
 inline uint32_t ShaderHandler::compileShaders() noexcept
 {
     const char * vertSh = _vertSh.c_str();
+    std::cout<<vertSh<<std::endl;
     _windowContext->ShaderSource(_vertex, 1,   &(vertSh) , NULL);
     _windowContext->CompileShader(_vertex);
-    checkForCompileErrors();
+    checkForCompileErrors(_vertex);
     
     const char * fragSh = _fragSh.c_str();
+    std::cout<<fragSh<<std::endl;
     _windowContext->ShaderSource(_fragment, 1,   &(fragSh) , NULL);
     _windowContext->CompileShader(_fragment);
-    checkForCompileErrors();
+    checkForCompileErrors(_fragment);
+    return {};
 }
 
-inline void ShaderHandler::checkForCompileErrors()
+inline void ShaderHandler::checkForCompileErrors(uint32_t shader)
 {
     GLint success;
     GLchar infoLog[1024];
-    _windowContext->GetShaderiv(_shaderId, GL_COMPILE_STATUS, &success);
+    _windowContext->GetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if(!success)
     {
-        _windowContext->GetShaderInfoLog(_shaderId, 1024, NULL, infoLog);
+        _windowContext->GetShaderInfoLog(shader, 1024, NULL, infoLog);
         _compileStatus = infoLog;
+        std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: "<< "\n" << _compileStatus << "\n -- --------------------------------------------------- -- " << std::endl;
     }
 }
 
@@ -80,6 +91,7 @@ inline void ShaderHandler::checkForLinkErrors()
     if(!success)
     {
         _windowContext->GetProgramInfoLog(_shaderId, 1024, NULL, infoLog);
+        std::cout<<infoLog<<std::endl;
     }
 }
 
@@ -91,11 +103,11 @@ inline uint32_t ShaderHandler::linkShaders() noexcept
     _windowContext->LinkProgram(_shaderId);
 }
 
-inline std::string ShaderHandler::getCompileLog()
+std::string ShaderHandler::getCompileLog()
 {
     return _compileStatus;
 }
-inline std::string ShaderHandler::getLinklog()
+std::string ShaderHandler::getLinklog()
 {
     return _linkStatus;
 }
@@ -103,6 +115,11 @@ inline std::string ShaderHandler::getLinklog()
 void ShaderHandler::useProgram() noexcept
 {
     _windowContext->UseProgram(_shaderId);
+}
+
+GLuint ShaderHandler::getShaderId()
+{
+    return _shaderId;
 }
 
 ShaderHandler::~ShaderHandler()

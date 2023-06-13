@@ -19,6 +19,7 @@
 #include <string>
 
 #include "util/functionutils.tpp"
+#include "graphics/shader_handler.hpp"
 
 /// Holds all state information relevant to a character as loaded using FreeType
 struct Character 
@@ -67,11 +68,13 @@ class TextComponent : std::enable_shared_from_this<TextComponent>
         std::shared_ptr<GLubyte> _expanded_bitmapdata; 
         //Error handling // Will be used for exceptions
         FT_Error _error;
-
+        
         std::unordered_map<char , Character> _charactermap;
         // Max character count
+        
+        ShaderHandler _shaderHandler;
+        
         static constexpr uint8_t CHAR_MAX_COUNT = 128;
-        int _shaderId;
         unsigned int _VBO;
         unsigned int _VAO;
         

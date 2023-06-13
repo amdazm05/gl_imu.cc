@@ -6,7 +6,9 @@
 
 #include <memory>
 #include <fstream>
-
+#include <string>
+#include <sstream>
+#include <iostream>
 class ShaderHandler : std::enable_shared_from_this<ShaderHandler>
 {
     public:
@@ -19,13 +21,13 @@ class ShaderHandler : std::enable_shared_from_this<ShaderHandler>
         ~ShaderHandler();
         // required for context sharing
         std::shared_ptr<ShaderHandler> getInstance();
-        uint32_t getShaderId();
         void useProgram() noexcept;
         void generateShaderProgram() noexcept;
 
         // Logging Errorss
         std::string getCompileLog();
         std::string getLinklog();
+        GLuint getShaderId();
         void setErrorLogging(bool statuss);
 
     private:
@@ -36,7 +38,7 @@ class ShaderHandler : std::enable_shared_from_this<ShaderHandler>
         std::string _fragSh;
 
         void checkForLinkErrors();
-        void checkForCompileErrors();
+        void checkForCompileErrors(uint32_t shader);
         
         uint32_t compileShaders() noexcept;
         uint32_t linkShaders() noexcept;
