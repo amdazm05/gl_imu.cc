@@ -1,7 +1,7 @@
 #include "graphics/text_component.hpp"
 
 TextComponent::TextComponent(std::shared_ptr<GLFWwindow> windowInstance, std::shared_ptr<GladGLContext> windowContext)
-: _shaderHandler("./shaders/textFrag.fs","./shaders/textVertex.vs","",windowContext)
+: _shaderHandler("./shaders/textVertex.vs","./shaders/textFrag.fs","",windowContext)
 {
     _window = windowInstance;
     _windowContext = windowContext;

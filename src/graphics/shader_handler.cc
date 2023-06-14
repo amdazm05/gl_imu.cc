@@ -1,7 +1,7 @@
 #include "graphics/shader_handler.hpp"
 
 #define FILE_ALLOCATOR(filename) new std::ifstream(filename, std::ios_base::in)
-#define FILE_DELETER [](std::ifstream * fileHandle){ fileHandle->close(); delete [] fileHandle;}
+#define FILE_DELETER [](std::ifstream * fileHandle){ fileHandle->close();}
 
 ShaderHandler::ShaderHandler
 (
