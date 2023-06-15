@@ -80,7 +80,8 @@
     };
 
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-
+    #include <windows.h>
+    #include <tchar.h>
     class WindowsSerialStreamer : SerialStreamer<WindowsSerialStreamer>
     {
         public:
@@ -93,7 +94,13 @@
             template<typename T>
             std::size_t ReadAvailableData( T * dataBufferToReadTo);
             void writeData(std::shared_ptr<char> dataToWrite, std::size_t bytesToWrite);
+        private:
+            DCB dcb;
+            HANDLE hCom;
+            BOOL fSuccess;
+            TCHAR *pcCommPort;
     };
     #endif
-
+/// Needing a non blocking mode
+/// https://stackoverflow.com/questions/17217032/reading-blocking-mode-from-com-port-rs232
 #endif
