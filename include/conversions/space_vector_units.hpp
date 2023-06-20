@@ -91,7 +91,7 @@ namespace SpaceUnits
     requires _isFloatingType4Byte<T> || _isFloatingType8Byte<T> 
     class Coordinates
     {
-        private:
+        public:
         enum AxisEnum
         {
             x = 0,
@@ -99,7 +99,7 @@ namespace SpaceUnits
             z = 2
         };
         public:
-        alignas (std::hardware_constructive_interference_size) std::array<T,3> _data;
+        std::array<T,3> _data;
         public:
         Coordinates():Coordinates(0.0f,0.0f,0.0f){}
         Coordinates(T x,T y, T z)

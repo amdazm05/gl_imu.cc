@@ -4,11 +4,12 @@
 #include <memory>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <conversions/space_vector_units.hpp>
 template <class _ShapeType>
 class Shape2DComponent
 {
     public:
-        Shape2DComponent(std::pair<float, float> && _positionCoordiates);
+        Shape2DComponent(SpaceUnits::Coordinates<float> && _positionCoordiates);
         ~Shape2DComponent();
         void render();
         void setDimensions(std::tuple<float,float,float> dim3);
@@ -17,7 +18,6 @@ class Shape2DComponent
         std::shared_ptr<_ShapeType> getInstance();
     private:
         std::shared_ptr<_ShapeType> _childClass;
-        std::pair<float,float> _Coordinates;
 };
 
 class Rectangle: Shape2DComponent<Rectangle>
@@ -27,9 +27,9 @@ class Rectangle: Shape2DComponent<Rectangle>
         ~Rectangle();
         void render();
         void setDimensions(std::tuple<float,float,float> dim3);
-        void setPosition(std::tuple<float,float> position3);
+        void setPosition(SpaceUnits::Coordinates<float> position3);
     protected:
-        std::pair<float,float> _dimensions;
+        std::array<SpaceUnits::Coordinates<float>,4> _vertices;
 };
 
 class Line: Shape2DComponent<Line>
@@ -42,7 +42,7 @@ class Line: Shape2DComponent<Line>
         void render();
     protected:
         // Start and stop point
-        std::pair<float,float> _dimensions;
+        std::array<SpaceUnits::Coordinates<float>,2>  _vertices;
 };
 
 class Triangle: Shape2DComponent<Triangle>
@@ -54,7 +54,7 @@ class Triangle: Shape2DComponent<Triangle>
         void setPosition(std::tuple<float,float> position3);
         void render();
     protected:
-        std::tuple<float,float,float>  _vertices;
+        std::array<SpaceUnits::Coordinates<float>,3>  _vertices;
 };
 
 #endif //_BASIC_SHAPES_COMPONENT
