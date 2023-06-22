@@ -7,14 +7,29 @@
 #include <conversions/space_vector_units.hpp>
 #include <graphics/shader_handler.hpp>
 #include <graphics/window_component.hpp>
+
+#define TESTING_VERTICES 1
 template <class _ShapeType>
 class Shape2DComponent : std::enable_shared_from_this<Shape2DComponent<_ShapeType>>
 {
     public:
         Shape2DComponent(std::shared_ptr<GladGLContext> windowContext):
-        shaderHandler("./shaders/shapeFragmentShader.fs","./shaders/shapeVertexShader.fs","",windowContext)
+        _shaderHandler("./shaders/shapeVertex.vs","./shaders/shapeFrag.fs","",windowContext)
         {
             _windowContext = windowContext;
+            _shaderHandler.generateShaderProgram();
+            // Vertex Array Object
+            _windowContext->GenVertexArrays(1,&VertexAttributeObject);
+            _windowContext->BindVertexArray(VertexAttributeObject);
+
+            // Vertex Buffer Object
+            _windowContext->GenBuffers(1,&VertexBufferObject);
+            _windowContext->BindVertexArray(VertexAttributeObject);
+
+            
+            _windowContext->GenBuffers(1, &ElementBufferObject);
+            _windowContext->BindBuffer(GL_ELEMENT_ARRAY_BUFFER, ElementBufferObject);
+            _windowContext->BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
         }
         ~Shape2DComponent()
         {
@@ -41,11 +56,26 @@ class Shape2DComponent : std::enable_shared_from_this<Shape2DComponent<_ShapeTyp
         SpaceUnits::Coordinates<float> _position;
         unsigned int VertexBufferObject;
         unsigned int VertexAttributeObject;
-        ShaderHandler shaderHandler;
+        unsigned int ElementBufferObject;
+        ShaderHandler _shaderHandler;
         std::shared_ptr<GladGLContext> _windowContext;
+        #if TESTING_VERTICES == 1
+        GLfloat vertices[20] = 
+        {
+            -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // Top-left
+            0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // Top-right
+            0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Bottom-right
+            -0.5f, -0.5f, 1.0f, 1.0f, 1.0f  // Bottom-left
+        };
+        GLuint elements[6] = 
+        {
+            0, 1, 2,
+            2, 3, 0
+        };
+        #endif
 };
 
-class Rectangle: Shape2DComponent<Rectangle>
+class Rectangle: public Shape2DComponent<Rectangle>
 {
     public:
         Rectangle(std::shared_ptr<GladGLContext> windowContext);
@@ -57,7 +87,7 @@ class Rectangle: Shape2DComponent<Rectangle>
         std::array<SpaceUnits::Coordinates<float>,4> _vertices;
 };
 
-class Line: Shape2DComponent<Line>
+class Line: public Shape2DComponent<Line>
 {
     public:
         Line(std::shared_ptr<GladGLContext> windowContext);
@@ -70,7 +100,7 @@ class Line: Shape2DComponent<Line>
         std::array<SpaceUnits::Coordinates<float>,2>  _vertices;
 };
 
-class Triangle: Shape2DComponent<Triangle>
+class Triangle: public Shape2DComponent<Triangle>
 {
     public:
         Triangle(std::shared_ptr<GladGLContext> windowContext);
