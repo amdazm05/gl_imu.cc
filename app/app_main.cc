@@ -2,6 +2,7 @@
 #include "graphics/window_component.hpp"
 #include "graphics/cursors_component.hpp"
 #include "graphics/text_component.hpp"
+#include "graphics/geometric_shapes_component.hpp"
 
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -30,6 +31,7 @@ int main()
     WindowRenderComponent Window;
     CursorsOptionsComponent Cursor(Window.getWindowInstance());
     TextComponent text(Window.getWindowInstance(),Window.getWindowContextInstance());
+    Shape2DComponent<Line> Shape(Window.getWindowContextInstance());
     text.init("Antonio.ttf",16);
     Cursor.setEnterExitCallbacks(cursor_enter_callback);
     Window.add_keyboard_callback(key_callback);
@@ -38,6 +40,7 @@ int main()
     while (Window.isWindowComponentClosed())
     {
         Window.renderWindow();
+        Shape.render();
         text.printtxt("Something",{25.0f, 25.0f});
         text.printtxt("Something",{100.0f, 25.0f});
         glfwSwapBuffers(Window.getWindowInstance().get());
