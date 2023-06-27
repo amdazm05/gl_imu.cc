@@ -56,6 +56,7 @@ add_library( ${PROJECT_NAME}
     ${PROJECT_SOURCE_DIR}/src/graphics/text_component.cc
     ${PROJECT_SOURCE_DIR}/src/graphics/shader_handler.cc
     ${PROJECT_SOURCE_DIR}/src/graphics/geometric_shapes_component.cc
+    ${PROJECT_SOURCE_DIR}/src/graphics/error_logger.cc
 )
 
 target_include_directories(
