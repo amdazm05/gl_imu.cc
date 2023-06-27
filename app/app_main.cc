@@ -32,20 +32,19 @@ int main()
     CursorsOptionsComponent Cursor(Window.getWindowInstance());
     TextComponent text(Window.getWindowInstance(),Window.getWindowContextInstance());
     Shape2DComponent<Line> Shape(Window.getWindowContextInstance());
-    text.init("Antonio.ttf",16);
+    text.init("Antonio.ttf",12);
     Cursor.setEnterExitCallbacks(cursor_enter_callback);
     Window.add_keyboard_callback(key_callback);
     std::cout<<(uint64_t)(Window.getWindowInstance().get())<<std::endl;
-
     while (Window.isWindowComponentClosed())
     {
         Window.renderWindow();
+        text.printtxt("Name:",{25.0f, 25.0f});
+        text.printtxt("Ahmed",{25.0f + 120.f, 25.0f});
+        text.printtxt("Azeem",{25.0f + 240.f, 25.0f});
         Shape.render();
-        text.printtxt("Something",{25.0f, 25.0f});
-        text.printtxt("Something",{100.0f, 25.0f});
         glfwSwapBuffers(Window.getWindowInstance().get());
         glfwPollEvents();
-
     }
 
     return 0;
