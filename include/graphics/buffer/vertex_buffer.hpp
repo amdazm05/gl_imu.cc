@@ -3,18 +3,20 @@
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include <conversions/space_vector_units.hpp>
+#include <buffer/buffer.hpp>
 namespace Buffer
 {
-    class VertexBuffer : public Buffer<VertexBuffer>
+    class VertexBuffer : public Buffer::IBuffer<VertexBuffer>
     {
         public:
-            VertexBuffer(shared_ptr<Glad>);
+            VertexBuffer(std::shared_ptr<GladGLContext> windowContext);
             ~VertexBuffer();
             void init();
             void bind();
             void unbind();
         private:
-            std::vector</*Add coordinates Class*/> _vertices;
+            std::vector<Coordinates> _vertices;
     };
 }
 
