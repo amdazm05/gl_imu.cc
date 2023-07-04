@@ -101,6 +101,7 @@ inline uint32_t ShaderHandler::linkShaders() noexcept
     _windowContext->AttachShader(_shaderId, _vertex);
     _windowContext->AttachShader(_shaderId, _fragment);
     _windowContext->LinkProgram(_shaderId);
+    return {};
 }
 
 std::string ShaderHandler::getCompileLog()
