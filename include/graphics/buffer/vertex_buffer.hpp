@@ -3,8 +3,11 @@
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+
+#include <vector>
+
 #include <conversions/space_vector_units.hpp>
-#include <buffer/buffer.hpp>
+#include "buffer.hpp"
 namespace Buffer
 {
     class VertexBuffer : public Buffer::IBuffer<VertexBuffer>
@@ -12,11 +15,10 @@ namespace Buffer
         public:
             VertexBuffer(std::shared_ptr<GladGLContext> windowContext);
             ~VertexBuffer();
+            void setData(std::vector<SpaceUnits::Coordinates<float>> && data);
             void init();
             void bind();
             void unbind();
-        private:
-            std::vector<Coordinates> _vertices;
     };
 }
 

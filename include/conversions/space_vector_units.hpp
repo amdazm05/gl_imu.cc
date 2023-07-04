@@ -6,6 +6,7 @@
 #include <memory>
 #include <compare>
 #include <new>
+#include <array>
 #include <algorithm>
 #include <cmath>
 
