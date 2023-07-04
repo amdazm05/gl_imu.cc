@@ -4,15 +4,9 @@
 [submodule "libs/benchmark"]
 	path = libs/benchmark
 	url = https://github.com/google/benchmark.git
-[submodule "libs/freeglut"]
-	path = libs/freeglut
-	url = https://github.com/FreeGLUTProject/freeglut.git
 [submodule "libs/glfw"]
 	path = libs/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "libs/glew-cmake"]
-	path = libs/glew-cmake
-	url = https://github.com/Perlmint/glew-cmake.git
 [submodule "libs/glad"]
 	path = libs/glad
 	url = https://github.com/Dav1dde/glad.git

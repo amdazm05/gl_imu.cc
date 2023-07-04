@@ -26,15 +26,12 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libs/glfw/include
     ${CMAKE_SOURCE_DIR}/thirdparty/glad_core/include
     ${CMAKE_SOURCE_DIR}/libs/glfw/deps
-    ${CMAKE_SOURCE_DIR}/libs/glew-cmake/include
     ${CMAKE_SOURCE_DIR}/libs/freetype/include
     ${CMAKE_SOURCE_DIR}/thirdparty/glad_core/include
     ${CMAKE_SOURCE_DIR}/libs
     )
 
-add_subdirectory(${PROJECT_SOURCE_DIR}/libs/freeglut)
 add_subdirectory(${PROJECT_SOURCE_DIR}/libs/glfw)
-add_subdirectory(${PROJECT_SOURCE_DIR}/libs/glew-cmake)
 add_subdirectory(${PROJECT_SOURCE_DIR}/libs/freetype)
 add_subdirectory(${PROJECT_SOURCE_DIR}/libs/glm)
 
@@ -57,6 +54,7 @@ add_library( ${PROJECT_NAME}
     ${PROJECT_SOURCE_DIR}/src/graphics/shader_handler.cc
     ${PROJECT_SOURCE_DIR}/src/graphics/geometric_shapes_component.cc
     ${PROJECT_SOURCE_DIR}/src/graphics/error_logger.cc
+    ${PROJECT_SOURCE_DIR}/src/graphics/buffer/vertex_buffer.cc
 )
 
 target_include_directories(
@@ -65,7 +63,7 @@ target_include_directories(
     ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm freeglut_static  glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
+target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm glfw ${PROJECT_SOURCE_DIR}/thirdparty/build/libglad_core.a freetype)
 add_executable(main
     ${PROJECT_SOURCE_DIR}/app/app_main.cc
 )
