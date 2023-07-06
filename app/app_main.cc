@@ -30,7 +30,8 @@ void cursor_enter_callback(GLFWwindow* window, int entered)
 int main()
 {
     SerialStreamer<WindowsSerialStreamer> SerialPort;
-    SerialPort.init("\\\\.\\COM6");
+    SerialPort.init("\\\\.\\COM5");
+    SerialPort.ReadAvailableData();
     glfwInit();
     WindowRenderComponent Window;
     CursorsOptionsComponent Cursor(Window.getWindowInstance());

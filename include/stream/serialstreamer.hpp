@@ -8,6 +8,7 @@
 #include <concepts>
 #include <coroutine>
 #include <iostream>
+#include <exception>
 #include <optional>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
     #include <windows.h>
@@ -92,10 +93,9 @@
             {
                 return static_cast<D*>(this)->isAValidPacketAvailable();
             }
-            template<typename T>
-            std::size_t ReadAvailableData( T * dataBufferToReadTo)
+            std::size_t ReadAvailableData()
             {
-                return static_cast<D*>(this)->ReadAvailableData(dataBufferToReadTo);
+                return static_cast<D*>(this)->ReadAvailableData();
             }
             void writeData(std::shared_ptr<char> dataToWrite, std::size_t bytesToWrite)
             {
@@ -126,8 +126,7 @@
             void setListOfDelimitersToFind(std::vector<uint32_t> && listofDelimiters);
             void init(std::string && string);
             bool isAValidPacketAvailable();
-            template<typename T>
-            std::size_t ReadAvailableData( T * dataBufferToReadTo);
+            std::size_t ReadAvailableData();
             void writeData(std::shared_ptr<char> dataToWrite, std::size_t bytesToWrite);
     };
     #endif

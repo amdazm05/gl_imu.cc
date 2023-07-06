@@ -33,7 +33,27 @@
 
         dcb.DCBlength = sizeof(dcb);
         //Gets the state of the COM port in question
-        GetCommState(hCom,&dcb);
+        if(GetCommState(hCom,&dcb)==false)
+        {
+            std::runtime_error("Unable to get State of the COMM Port " + string);
+        }
+
+        dcb.BaudRate = 921600;      // Setting BaudRate = 9600
+        dcb.ByteSize = 8;             // Setting ByteSize = 8
+        dcb.StopBits = ONESTOPBIT;    // Setting StopBits = 1
+        dcb.Parity = NOPARITY;        // Setting Parity = None 
+
+        COMMTIMEOUTS timeouts = { 0 };
+        timeouts.ReadIntervalTimeout         = 1000;
+        timeouts.ReadTotalTimeoutConstant    = 0;
+        timeouts.ReadTotalTimeoutMultiplier  = 0;
+        timeouts.WriteTotalTimeoutConstant   = 0;
+        timeouts.WriteTotalTimeoutMultiplier = 0;
+
+        if (SetCommTimeouts(hCom, &timeouts) == false)
+        {
+            std::runtime_error("Unable to set COM timeouts");
+        }
 
 
     }
@@ -43,10 +63,36 @@
         return {};
     }
 
-    template<typename T>
-    std::size_t WindowsSerialStreamer::ReadAvailableData( T * dataBufferToReadTo)
+    std::size_t WindowsSerialStreamer::ReadAvailableData()
     {
-        return {};
+        BOOL Status; 
+        DWORD bytesRecievedCount = -1;
+            
+        if (Status == false)
+        {
+            //Error reading COM Port
+             std::runtime_error("Unable to set COM timeouts");
+        }
+        else
+        {
+            do
+            {
+                Status = ReadFile(hCom, recieveBuffer.data(), sizeof(char)*recieveBuffer.size(), &bytesRecievedCount, nullptr);
+                if(Status==true)
+                {
+                    if(bytesRecievedCount>0)
+                    {
+                        break;
+                    }
+                }
+                
+            }while (bytesRecievedCount);
+            
+            for (int j = 0; j < bytesRecievedCount; j++)      
+                std::cout<<std::hex<<(std::uint16_t)recieveBuffer[j]<<" "<<std::dec;
+        }   
+
+        return std::size_t(bytesRecievedCount);
     }
 
     void WindowsSerialStreamer::writeData(std::shared_ptr<char> dataToWrite, std::size_t bytesToWrite)
