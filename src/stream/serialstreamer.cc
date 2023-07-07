@@ -21,7 +21,7 @@
     void WindowsSerialStreamer::init(std::string && string)
     {
         // Opens the file descriptor AKA COM Port
-        hCom = CreateFileA(
+        hCom = CreateFile(
             string.c_str(),
             GENERIC_READ | GENERIC_WRITE,
             0, // Shared mode
@@ -31,11 +31,16 @@
             nullptr
          );
 
+        if(hCom == INVALID_HANDLE_VALUE)
+        {
+            throw std::runtime_error("No COM Port present : " + string + "is either not connected or experiencing noise");
+        }
+
         dcb.DCBlength = sizeof(dcb);
         //Gets the state of the COM port in question
         if(GetCommState(hCom,&dcb)==false)
         {
-            std::runtime_error("Unable to get State of the COMM Port " + string);
+            throw std::runtime_error("Unable to get State of the COMM Port " + string);
         }
 
         dcb.BaudRate = 921600;      // Setting BaudRate = 9600
@@ -44,7 +49,8 @@
         dcb.Parity = NOPARITY;        // Setting Parity = None 
 
         COMMTIMEOUTS timeouts = { 0 };
-        timeouts.ReadIntervalTimeout         = 1000;
+        //MAXDWORD is important
+        timeouts.ReadIntervalTimeout         = MAXDWORD;
         timeouts.ReadTotalTimeoutConstant    = 0;
         timeouts.ReadTotalTimeoutMultiplier  = 0;
         timeouts.WriteTotalTimeoutConstant   = 0;
@@ -52,7 +58,7 @@
 
         if (SetCommTimeouts(hCom, &timeouts) == false)
         {
-            std::runtime_error("Unable to set COM timeouts");
+            throw std::runtime_error("Unable to set COM timeouts");
         }
 
 
@@ -67,31 +73,16 @@
     {
         BOOL Status; 
         DWORD bytesRecievedCount = -1;
-            
-        if (Status == false)
+        do
         {
-            //Error reading COM Port
-             std::runtime_error("Unable to set COM timeouts");
-        }
-        else
-        {
-            do
+            Status = ReadFile(hCom, recieveBuffer.data(), sizeof(char)*recieveBuffer.size(), &bytesRecievedCount, nullptr);
+            if(Status==true)
             {
-                Status = ReadFile(hCom, recieveBuffer.data(), sizeof(char)*recieveBuffer.size(), &bytesRecievedCount, nullptr);
-                if(Status==true)
-                {
-                    if(bytesRecievedCount>0)
-                    {
-                        break;
-                    }
-                }
+                //Do something from the recieved bytes: design a buffer management class or a circular buffer
                 
-            }while (bytesRecievedCount);
+            }
             
-            for (int j = 0; j < bytesRecievedCount; j++)      
-                std::cout<<std::hex<<(std::uint16_t)recieveBuffer[j]<<" "<<std::dec;
-        }   
-
+        }while (bytesRecievedCount);
         return std::size_t(bytesRecievedCount);
     }
 
