@@ -8,7 +8,13 @@
 #include <concepts>
 #include <coroutine>
 #include <iostream>
+#include <exception>
 #include <optional>
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #include <windows.h>
+    #include <tchar.h>
+    #include <winbase.h>
+#endif
 
     template<class T>
     concept _IsBufferType = std::is_pointer<T>::value;
@@ -60,29 +66,58 @@
 
 
     template<class D>
-    class SerialStreamer
+    class SerialStreamer: std::enable_shared_from_this<SerialStreamer<D>>
     {
         public:
-            SerialStreamer();
-            ~SerialStreamer();
-            void enableDelimeterSearchMode(bool condition);
-            void setListOfDelimitersToFind(std::vector<uint32_t> && listofDelimiters);
-            void init(std::string && string);
-            bool isAValidPacketAvailable();
-            template<typename T>
-            std::size_t ReadAvailableData( T * dataBufferToReadTo);
-            void writeData(std::shared_ptr<char> dataToWrite, std::size_t bytesToWrite);
-        private:
+            SerialStreamer()
+            {
+
+            }
+            ~SerialStreamer()
+            {
+
+            }
+            void enableDelimeterSearchMode(bool condition)
+            {
+                static_cast<D*>(this)->enableDelimeterSearchMode(condition);
+            }
+            void setListOfDelimitersToFind(std::vector<uint32_t> && listofDelimiters)
+            {
+                static_cast<D*>(this)->setListOfDelimitersToFind(listofDelimiters);
+            }
+            void init(std::string && string)
+            {
+                static_cast<D*>(this)->init(std::move(string));
+            }   
+            bool isAValidPacketAvailable()
+            {
+                return static_cast<D*>(this)->isAValidPacketAvailable();
+            }
+            std::size_t ReadAvailableData()
+            {
+                return static_cast<D*>(this)->ReadAvailableData();
+            }
+            void writeData(std::shared_ptr<char> dataToWrite, std::size_t bytesToWrite)
+            {
+
+            }
+        protected:
+            //Must be a deterministic
             std::vector<uint32_t> listofDelimiters;
             std::array<char,1<<16> recieveBuffer;
             std::unique_ptr<char> currentBufferLocation;
             D * child;
+
+            #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+            DCB dcb;
+            HANDLE hCom;
+            BOOL fSuccess;
+            TCHAR *pcCommPort;
+            #endif
     };
 
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-    #include <windows.h>
-    #include <tchar.h>
-    class WindowsSerialStreamer : SerialStreamer<WindowsSerialStreamer>
+    class WindowsSerialStreamer : public SerialStreamer<WindowsSerialStreamer>
     {
         public:
             WindowsSerialStreamer();
@@ -91,14 +126,8 @@
             void setListOfDelimitersToFind(std::vector<uint32_t> && listofDelimiters);
             void init(std::string && string);
             bool isAValidPacketAvailable();
-            template<typename T>
-            std::size_t ReadAvailableData( T * dataBufferToReadTo);
+            std::size_t ReadAvailableData();
             void writeData(std::shared_ptr<char> dataToWrite, std::size_t bytesToWrite);
-        private:
-            DCB dcb;
-            HANDLE hCom;
-            BOOL fSuccess;
-            TCHAR *pcCommPort;
     };
     #endif
 /// Needing a non blocking mode

@@ -4,6 +4,7 @@
 #include "graphics/text_component.hpp"
 #include "graphics/geometric_shapes_component.hpp"
 #include "graphics/error_logger.hpp"
+#include "stream/serialstreamer.hpp"
 
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
@@ -28,6 +29,9 @@ void cursor_enter_callback(GLFWwindow* window, int entered)
 
 int main()
 {
+    SerialStreamer<WindowsSerialStreamer> SerialPort;
+    SerialPort.init("\\\\.\\COM5");
+    SerialPort.ReadAvailableData();
     glfwInit();
     WindowRenderComponent Window;
     CursorsOptionsComponent Cursor(Window.getWindowInstance());
