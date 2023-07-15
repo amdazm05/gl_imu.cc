@@ -16,7 +16,7 @@ cmake_policy(SET CMP0115 OLD)
 set(CXX_STANDARD_REQUIRED 20)
 set(CMAKE_CXX_FLAGS "-std=c++20 -fcoroutines")
 
-option(EnableTests "Tests are Disabled" OFF)
+option(EnableTests "Tests are Disabled" ON)
 option(GLFW_BUILD_EXAMPLES "Disabled examples from GLFW" OFF)
 option(GLFW_BUILD_TESTS "Disabled GLFW Testss" OFF)
 option(GLFW_BUILD_DOCS "Not building GLFW build docs" OFF)
