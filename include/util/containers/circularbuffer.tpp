@@ -3,33 +3,32 @@
 
 #include <iostream>
 #include <mutex>
+#include <array>
 
 constexpr int threadedsafetymode = 1;
 
 template<class TypeOfBuffer, std::size_t sizeOfBuffer, int threadedmode = threadedsafetymode>
 class CircularBuffer
 {
-    //Array// Buffer of Objects
     private:
-        uint32_t _tail;
-        uint32_t _head;
+        std::size_t _tail;
+        std::size_t _head;
         std::mutex _mtx;
-        using  _readwriteLock std::unique_lock<std::mutex>;
-        uint32_t _length;
-        std::array<TypeOfBuffer,sizeofBuffer> _buffer;
-    private:
+        std::size_t _length;
+        std::array<TypeOfBuffer,sizeOfBuffer> _buffer;
+    public:
         CircularBuffer()
         {
             _tail = 0;
             _head = sizeOfBuffer-1;
             _length = 0;
         }
-        void enqueue(TypeOfBuffer&&object) noexcept
+        void enqueue(TypeOfBuffer&object) noexcept
         {
             if constexpr (threadedmode)
             {
-                std::lock_guard<_readwriteLock> lock;
-                    _head++;
+                    std::lock_guard<std::mutex> _lock(_mtx);
+                    _head = operator++(int(_head));
                     _buffer[_head]= object;
                     if(full())
                     {
@@ -56,9 +55,9 @@ class CircularBuffer
                 }
                 else
                 {
-                    std::lock_guard<_readwriteLock> lock;
+                    std::lock_guard<std::mutex> _lock(_mtx);
                     TypeOfBuffer valToReturn = _buffer[_tail];
-                    _tail = _tail++;
+                    _tail = operator++(int(_tail));;
                     _length--;
                     return valToReturn;
                 }
@@ -74,10 +73,10 @@ class CircularBuffer
         }
         inline bool full()
         {
-            return _length == sizeofBuffer;
+            return _length == sizeOfBuffer;
         }
     public:
-        uint32_t operator++(uint32_t & position)
+        std::size_t operator++(int  position)
         {
             return (position +1) % sizeOfBuffer;
         }
