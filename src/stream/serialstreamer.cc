@@ -18,7 +18,7 @@
 
     }
 
-    void WindowsSerialStreamer::init(std::string && string)
+    void WindowsSerialStreamer::init(std::string && string,std::uint32_t baudRate)
     {
         // Opens the file descriptor AKA COM Port
         hCom = CreateFile(
@@ -43,7 +43,7 @@
             throw std::runtime_error("Unable to get State of the COMM Port " + string);
         }
 
-        dcb.BaudRate = 921600;      // Setting BaudRate = 9600
+        dcb.BaudRate = baudRate;      // Setting BaudRate = 9600
         dcb.ByteSize = 8;             // Setting ByteSize = 8
         dcb.StopBits = ONESTOPBIT;    // Setting StopBits = 1
         dcb.Parity = NOPARITY;        // Setting Parity = None 
@@ -82,7 +82,7 @@
                 
             }
             
-        }while (bytesRecievedCount);
+        }while (bytesRecievedCount<=0);
         return std::size_t(bytesRecievedCount);
     }
 

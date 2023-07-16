@@ -85,9 +85,9 @@
             {
                 static_cast<D*>(this)->setListOfDelimitersToFind(listofDelimiters);
             }
-            void init(std::string && string)
+            void init(std::string && string,std::uint32_t baudRate=115200)
             {
-                static_cast<D*>(this)->init(std::move(string));
+                static_cast<D*>(this)->init(std::move(string),baudRate);
             }   
             bool isAValidPacketAvailable()
             {
@@ -124,7 +124,7 @@
             ~WindowsSerialStreamer();
             void enableDelimeterSearchMode(bool condition);
             void setListOfDelimitersToFind(std::vector<uint32_t> && listofDelimiters);
-            void init(std::string && string);
+            void init(std::string && string,std::uint32_t baudRate);
             bool isAValidPacketAvailable();
             std::size_t ReadAvailableData();
             void writeData(std::shared_ptr<char> dataToWrite, std::size_t bytesToWrite);
