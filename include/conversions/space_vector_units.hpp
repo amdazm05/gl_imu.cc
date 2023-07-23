@@ -99,10 +99,35 @@ namespace SpaceUnits
             using difference_type = std::ptrdiff_t;
             using pointer = T*;
             using reference = T&;
-            Iterator():Iterator(nullptr){}
-            Iterator(pointer ptr):m_ptr(ptr){}
+                Iterator():Iterator(nullptr){}
+                Iterator(pointer ptr):m_ptr(ptr){}
+                pointer operator->() const {return m_ptr;}
+                reference operator*() const {return *m_ptr;}
+                value operator[](difference_type j){return *(m_ptr+j);}
+                Iterator& operator++()
+                {
+                    m_ptr++;
+                    return *this;
+                }
+                Iterator& operator++(int)
+                {
+                    Iterator _temp = *this;
+                    m_ptr++;
+                    return temp;
+                }
+                Iterator& operator--()
+                {
+                    m_ptr--;
+                    return *this;
+                }
+                Iterator& operator--(int)
+                {
+                    Iterator _temp = *this;
+                    m_ptr--;
+                    return temp;
+                }
             private:
-            pointer m_ptr;
+                pointer m_ptr;
         };
         public:
         enum AxisEnum
