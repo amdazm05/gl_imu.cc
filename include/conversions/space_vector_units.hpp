@@ -92,6 +92,18 @@ namespace SpaceUnits
     requires _isFloatingType4Byte<T> || _isFloatingType8Byte<T> 
     class Coordinates
     {
+        class Iterator
+        {
+            using category = std::random_access_iterator_tag;
+            using value_type = T;
+            using difference_type = std::ptrdiff_t;
+            using pointer = T*;
+            using reference = T&;
+            Iterator():Iterator(nullptr){}
+            Iterator(pointer ptr):m_ptr(ptr){}
+            private:
+            pointer m_ptr;
+        };
         public:
         enum AxisEnum
         {
@@ -163,6 +175,14 @@ namespace SpaceUnits
             );
 
             return resultToCompareRHS <=> resultToCompareLHS;
+        }
+        Iterator begin()
+        {
+            return Iterator(&_data[0]);
+        }
+        Iterator end()
+        {
+            return Iterator(_data[3]);
         }
     };
 
