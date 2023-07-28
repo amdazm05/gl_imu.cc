@@ -20,6 +20,17 @@ namespace Buffer
             void bind();
             void unbind();
     };
+
+    class VertexElementBuffer : public Buffer::IBuffer<VertexBuffer>
+    {
+        public:
+            VertexElementBuffer(std::shared_ptr<GladGLContext> windowContext);
+            ~VertexElementBuffer();
+            void setData(std::vector<SpaceUnits::Coordinates<float>> && data);
+            void init();
+            void bind();
+            void unbind();
+    };
 }
 
 #endif //_VERTEX_BUFFER
